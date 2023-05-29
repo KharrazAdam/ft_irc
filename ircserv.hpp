@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:08:52 by akharraz          #+#    #+#             */
-/*   Updated: 2023/05/22 17:17:29 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/05/28 21:11:52 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,12 @@
 class ircserv
 {
 private:
-	int				port;
+
 	// std::string	password;
 	bool	is_num(std::string);
 	bool	ircserv_port(char *);
 public:
+	int	port;
 	ircserv();
 	~ircserv();
 	bool	ircserv_start(char **);
