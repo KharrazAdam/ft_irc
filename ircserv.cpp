@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/05/29 01:18:39 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/05/29 01:29:44 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +43,6 @@ bool	ircserv::ircserv_start(char **av)
 {
 	if (ircserv_port(av[1]) == false)
 		return std::cerr << "Error: invalid port" << std::endl, false;
+	password = av[2];
 	return true;
 };
