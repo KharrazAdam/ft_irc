@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/05/30 16:55:40 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/05/30 20:48:51 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ bool	ircserv::ircserv_port(char *av)
 	return std::cerr << "Error: port out of range: 1024 -> 65535" << std::endl, false;
 }
 
-bool ircserv::ircserv_bind(sockaddr_in6 *addr, int sock)
+bool	ircserv::ircserv_bind(sockaddr_in6 *addr, int sock)
 {
 	bzero(addr, sizeof(sockaddr_in6));
 	addr->sin6_family = AF_INET6;
@@ -52,9 +52,10 @@ bool ircserv::ircserv_bind(sockaddr_in6 *addr, int sock)
 
 bool	ircserv::ircserv_run(void)
 {
-	int	sock;
-	sockaddr_in6 addr;
-
+	int				sock;
+	sockaddr_in6	addr;
+	char			buffer[TCP_MSS];
+	int				client;
 	sock = socket(PF_INET6, SOCK_STREAM, 0);
 	if (sock == -1)
 		return std::cerr << "Error: socket()" << std::endl, false;
@@ -65,10 +66,13 @@ bool	ircserv::ircserv_run(void)
 	if (listen(sock, SOMAXCONN) == -1)
 		return std::cerr << "Error: listen()" << std::endl, false;	
 
-	while (accept(sock, NULL, NULL) != -1)
+	while ((client = accept(sock, NULL, NULL)) != -1)
 	{
-		printf("salam\n");
+		if (recv(client, buffer, TCP_MSS, 0) == -1)
+			return std::cerr << "Error: recv()" << std::endl, false;	
+		printf("%s", buffer);			
 	}
+	
 	return (close(sock), true);
 }
 
