@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/05/29 20:47:01 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/05/30 16:02:35 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,24 +43,29 @@ bool	ircserv::ircserv_run(void)
 {
 	int	sock;
 	sockaddr_in6 addr;
-	sockaddr_in addr0;
 
 	// creat socket
 	sock = socket(PF_INET6, SOCK_STREAM, 0);
 	if (sock == -1)
 		return std::cerr << "Error: socket()" << std::endl, false;
+
 	// binding socket into port and ip address
 	bzero(&addr, sizeof(sockaddr_in6));
 	addr.sin6_family = AF_INET6;
-	addr.sin6_port = htons(port); // host to network short if it's small endian converts it to big endian
-	memcpy(&addr.sin6_addr, &in6addr_any, sizeof(in6addr_any));
+	addr.sin6_port = htons(port); // host to network short: if it's small endian converts it to big endian	
+	addr.sin6_len = sizeof(sockaddr_in6);
+	if (bind(sock, (sockaddr *)&addr, sizeof(sockaddr_in6)) == -1)
+		return std::cerr << "Error: bind()" << std::endl, false;
 
-	std::cout << "sockaddr -> " << sizeof(sockaddr) << std::endl;
-	std::cout << "sockaddr_in4 -> " << sizeof(sockaddr_in) << std::endl;
-	std::cout << "sockaddr_in6 -> " << sizeof(sockaddr_in6) << std::endl;
-	std::cout << "in6addr_any -> " << sizeof(in6addr_any) << std::endl;
-	// if (bind(sock, &add, sizeof(sockaddr)) == -1)
-	// 	return std::cerr << "Error: bind()" << std::endl, close(sock), false;
+	// listening
+	if (listen(sock, SOMAXCONN) == -1)
+		return std::cerr << "Error: listen()" << std::endl, false;
+	
+	while (accept(sock, NULL, NULL) != -1)
+	{
+		printf("salam\n");
+	}
+	
 	return (close(sock), true);
 }
 
