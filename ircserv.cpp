@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/05/30 20:48:51 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/05/31 02:03:31 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,12 @@ bool	ircserv::ircserv_bind(sockaddr_in6 *addr, int sock)
 bool	ircserv::ircserv_run(void)
 {
 	int				sock;
-	sockaddr_in6	addr;
-	char			buffer[TCP_MSS];
 	int				client;
+	sockaddr_in6	addr;
+	std::string		buffer;
+	char			buf[TCP_MSS];
+	int				rc;
+
 	sock = socket(PF_INET6, SOCK_STREAM, 0);
 	if (sock == -1)
 		return std::cerr << "Error: socket()" << std::endl, false;
@@ -68,11 +71,14 @@ bool	ircserv::ircserv_run(void)
 
 	while ((client = accept(sock, NULL, NULL)) != -1)
 	{
-		if (recv(client, buffer, TCP_MSS, 0) == -1)
-			return std::cerr << "Error: recv()" << std::endl, false;	
-		printf("%s", buffer);			
+		buffer.clear();
+		if ((rc = recv(client, buf, TCP_MSS, 0)) == -1)
+			return std::cerr << "Error: recv()" << std::endl, close(client), false;
+		buffer.append(buf, rc);
+		if (send(client, buffer.c_str(), strlen(buffer.c_str()), 0) == -1)
+			return std::cerr << "Error: send()" << std::endl, close(client), false;
+		close(client);
 	}
-	
 	return (close(sock), true);
 }
 
