@@ -6,37 +6,43 @@
 #    By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/22 16:06:48 by akharraz          #+#    #+#              #
-#    Updated: 2023/06/02 08:56:42 by akharraz         ###   ########.fr        #
+#    Updated: 2023/06/02 15:42:55 by akharraz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = ircserv
+
+NAME = ./bin/ircserv
 CC = c++
-SRC =  $(addprefix ./src/, ircserv.hpp client.hpp)
+SRC = $(addsuffix .cpp, ircserv client main)
 
 CFLAGS = -Wall -Wextra -Werror -std=c++98
-
-INC_DIR = 
+ 
 INC = $(addprefix ./inc/, ircserv.hpp client.hpp)
 
-$(addprefix ./obj/, ircserv.hpp client.hpp)
-OBJS = $(SRC:.cpp=.o)
+OBJS = $(addprefix obj/, $(SRC:.cpp=.o))
 
 all: $(NAME)
 
-$(OBJS): %.o: %.cpp $(INC)
+obj/%.o: src/%.cpp $(INC)
+	@if [ ! -d "obj" ]; then \
+		mkdir obj; chmod 777 obj\
+	else \
+		echo chmod 777 obj; \
+	fi
 	$(CC) -c $(CFLAGS) -I./inc $< -o $@
 
 $(NAME): $(OBJS)
+	@if [ ! -d "bin" ]; then \
+		mkdir bin; chmod 777 bin\
+	else \
+		echo chmod 777 bin; \
+	fi
 	$(CC) $(CFLAGS) $(OBJS) -o $@
 
 clean:
-	rm -f $(OBJS)
+	rm -rf $(OBJS)
 
 fclean: clean
-	rm -f $(NAME)
+	rm -rf $(NAME)
 
 re: fclean all
-
-
-

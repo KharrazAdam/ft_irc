@@ -1,5 +1,5 @@
 ircserv
 obm
 a.out
-*.o
+obj
 IBM_server.c
