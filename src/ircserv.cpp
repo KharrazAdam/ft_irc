@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/05/31 02:03:31 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/02 08:46:48 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,12 +71,17 @@ bool	ircserv::ircserv_run(void)
 
 	while ((client = accept(sock, NULL, NULL)) != -1)
 	{
+		while(1){
 		buffer.clear();
 		if ((rc = recv(client, buf, TCP_MSS, 0)) == -1)
 			return std::cerr << "Error: recv()" << std::endl, close(client), false;
+		if (rc == 0)
+        	return std::cout << "The client disconnected" << std::endl, true;
 		buffer.append(buf, rc);
-		if (send(client, buffer.c_str(), strlen(buffer.c_str()), 0) == -1)
-			return std::cerr << "Error: send()" << std::endl, close(client), false;
+		std::cout << buffer;
+		// if (send(client, buffer.c_str(), strlen(buffer.c_str()), 0) == -1)
+		// 	return std::cerr << "Error: send()" << std::endl, close(client), false;
+		}
 		close(client);
 	}
 	return (close(sock), true);
