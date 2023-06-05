@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:27:46 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/02 08:51:53 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/04 05:22:53 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,4 @@ class client
 private:
 	/* data */
 public:
-	client(/* args */);
-	~client();
 };
-
-client::client(/* args */)
-{
-}
-
-
-
-
-
-client::~client()
-{
-}

@@ -6,16 +6,15 @@
 #    By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/22 16:06:48 by akharraz          #+#    #+#              #
-#    Updated: 2023/06/02 15:42:55 by akharraz         ###   ########.fr        #
+#    Updated: 2023/06/05 00:29:58 by akharraz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-
 
 NAME = ./bin/ircserv
 CC = c++
 SRC = $(addsuffix .cpp, ircserv client main)
 
-CFLAGS = -Wall -Wextra -Werror -std=c++98
+CFLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address
  
 INC = $(addprefix ./inc/, ircserv.hpp client.hpp)
 

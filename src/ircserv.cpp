@@ -6,14 +6,16 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/02 08:46:48 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/05 02:57:26 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ircserv.hpp"
+# define TIMEOUT 1000
 
 ircserv::ircserv(){};
 ircserv::~ircserv(){};
+
 
 bool	ircserv::is_num(std::string str)
 {
@@ -59,6 +61,10 @@ bool	ircserv::ircserv_run(void)
 	char			buf[TCP_MSS];
 	int				rc;
 
+	std::vector<pollfd>				fds;
+	std::vector<pollfd>::iterator	it;
+
+
 	sock = socket(PF_INET6, SOCK_STREAM, 0);
 	if (sock == -1)
 		return std::cerr << "Error: socket()" << std::endl, false;
@@ -69,18 +75,27 @@ bool	ircserv::ircserv_run(void)
 	if (listen(sock, SOMAXCONN) == -1)
 		return std::cerr << "Error: listen()" << std::endl, false;	
 
+	while (1)
+	{
+		client = accept(sock, NULL, NULL); // returns file descriptor
+		if (client == -1)
+			return std::cerr << "Error: accept()" << std::endl, false;
+		// add_to();
+		poll(fds.data(), fds.size(), TIMEOUT);
+	}
+
+	// --- not counted;
 	while ((client = accept(sock, NULL, NULL)) != -1)
 	{
-		while(1){
-		buffer.clear();
-		if ((rc = recv(client, buf, TCP_MSS, 0)) == -1)
-			return std::cerr << "Error: recv()" << std::endl, close(client), false;
-		if (rc == 0)
-        	return std::cout << "The client disconnected" << std::endl, true;
-		buffer.append(buf, rc);
-		std::cout << buffer;
-		// if (send(client, buffer.c_str(), strlen(buffer.c_str()), 0) == -1)
-		// 	return std::cerr << "Error: send()" << std::endl, close(client), false;
+		while(1)
+		{
+			buffer.clear();
+			if ((rc = recv(client, buf, TCP_MSS, 0)) == -1)
+				return std::cerr << "Error: recv()" << std::endl, close(client), false;
+			if (rc == 0)
+        		return std::cout << "The client disconnected" << std::endl, true;
+			buffer.append(buf, rc);
+			std::cout << buffer;
 		}
 		close(client);
 	}
