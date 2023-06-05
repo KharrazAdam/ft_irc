@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/05 10:28:33 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/05 10:40:18 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,10 @@ bool	ircserv::ircserv_receiv(int sock)
 	int		i = 0;
 	int		client;
 
+	// <------------------>
+	
+	
+	
 	num = 1;
 	bzero(Ps, MAX_POLLFD);
 	Ps[0].fd = sock;
@@ -88,13 +92,13 @@ bool	ircserv::ircserv_receiv(int sock)
 					}
 				}
 			}
+			else
+			{
+				
+			}
 			i++;
-		}
-		
-		if (true)
-			;
+		}	
 	}
-	(void)sock;
 	return (true);
 }
 
