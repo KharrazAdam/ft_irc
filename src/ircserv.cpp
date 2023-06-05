@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/05 10:40:18 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/05 23:23:32 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,42 +62,54 @@ bool	ircserv::ircserv_receiv(int sock)
 
 	// <------------------>
 	
-	
-	
+	char	buffer[1024];
+	std::string str;
+
 	num = 1;
 	bzero(Ps, MAX_POLLFD);
 	Ps[0].fd = sock;
 	Ps[0].events = POLLIN;
 	while (1)
 	{
-		i = 0;
 		rs = poll(Ps, MAX_POLLFD, -1);
 		if (rs == -1)
 			return std::cerr << "Error: poll()" << std::endl, false;
+		i = 0;
 		while (i < num)
 		{
 			if (Ps[i].revents & POLLIN)
 			{
 				if (Ps[i].fd == sock)
 				{
+					// write(1, "i am here\n", 11);
 					client = accept(sock, NULL, NULL);
 					if (client == -1)
 						return std::cerr << "Error: accept()" << std::endl, false;
 					else
 					{
-						num++;
 						Ps[num].fd = client;
 						Ps[num].events = POLLIN;
 						std::cout << "new connection established fd == {" << Ps[num].fd << "}" << std::endl;
+						num++;
 					}
 				}
-			}
-			else
-			{
-				
+				else
+				{
+					str.clear();
+					rs = recv(Ps[i].fd, buffer, 1024, 0);
+					if (rs == -1)
+						return std::cerr << "Error: recv()" << std::endl, false;
+					if (rs == 0)
+					{
+						std::cerr << "client disconnnected" << std::endl;
+						close(Ps[i].fd);
+					}
+					str.append(buffer, rs);
+					std::cout << str;
+				}
 			}
 			i++;
-		}	
+		}
 	}
 	return (true);
 }
