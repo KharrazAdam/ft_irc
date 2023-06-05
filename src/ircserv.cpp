@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/05 02:57:26 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/05 10:28:33 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,53 +52,66 @@ bool	ircserv::ircserv_bind(sockaddr_in6 *addr, int sock)
 	return (true);
 }
 
+bool	ircserv::ircserv_receiv(int sock)
+{
+	pollfd	Ps[MAX_POLLFD];
+	int		rs;
+	int		num;
+	int		i = 0;
+	int		client;
+
+	num = 1;
+	bzero(Ps, MAX_POLLFD);
+	Ps[0].fd = sock;
+	Ps[0].events = POLLIN;
+	while (1)
+	{
+		i = 0;
+		rs = poll(Ps, MAX_POLLFD, -1);
+		if (rs == -1)
+			return std::cerr << "Error: poll()" << std::endl, false;
+		while (i < num)
+		{
+			if (Ps[i].revents & POLLIN)
+			{
+				if (Ps[i].fd == sock)
+				{
+					client = accept(sock, NULL, NULL);
+					if (client == -1)
+						return std::cerr << "Error: accept()" << std::endl, false;
+					else
+					{
+						num++;
+						Ps[num].fd = client;
+						Ps[num].events = POLLIN;
+						std::cout << "new connection established fd == {" << Ps[num].fd << "}" << std::endl;
+					}
+				}
+			}
+			i++;
+		}
+		
+		if (true)
+			;
+	}
+	(void)sock;
+	return (true);
+}
+
 bool	ircserv::ircserv_run(void)
 {
 	int				sock;
-	int				client;
 	sockaddr_in6	addr;
-	std::string		buffer;
-	char			buf[TCP_MSS];
-	int				rc;
-
-	std::vector<pollfd>				fds;
-	std::vector<pollfd>::iterator	it;
-
 
 	sock = socket(PF_INET6, SOCK_STREAM, 0);
 	if (sock == -1)
 		return std::cerr << "Error: socket()" << std::endl, false;
-
 	if (ircserv_bind(&addr, sock) == false)
 		return close(sock), false;
-
 	if (listen(sock, SOMAXCONN) == -1)
 		return std::cerr << "Error: listen()" << std::endl, false;	
-
-	while (1)
-	{
-		client = accept(sock, NULL, NULL); // returns file descriptor
-		if (client == -1)
-			return std::cerr << "Error: accept()" << std::endl, false;
-		// add_to();
-		poll(fds.data(), fds.size(), TIMEOUT);
-	}
-
-	// --- not counted;
-	while ((client = accept(sock, NULL, NULL)) != -1)
-	{
-		while(1)
-		{
-			buffer.clear();
-			if ((rc = recv(client, buf, TCP_MSS, 0)) == -1)
-				return std::cerr << "Error: recv()" << std::endl, close(client), false;
-			if (rc == 0)
-        		return std::cout << "The client disconnected" << std::endl, true;
-			buffer.append(buf, rc);
-			std::cout << buffer;
-		}
-		close(client);
-	}
+	if (ircserv_receiv(sock) == false)
+		return false;
 	return (close(sock), true);
 }
 

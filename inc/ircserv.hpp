@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:08:52 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/05 00:01:18 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/05 06:26:06 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,11 @@ private:
 	bool	ircserv_pass(char *);
 	bool	ircserv_run(void);
 	bool	ircserv_bind(sockaddr_in6 *addr, int sock);
+	bool	ircserv_receiv(int sock);
 public:
+	bool	ircserv_start(char **);
 	ircserv();
 	~ircserv();
-	bool	ircserv_start(char **);
 };
 
 #endif
