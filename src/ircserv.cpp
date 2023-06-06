@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/06 04:34:20 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/06 10:49:14 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,25 +68,23 @@ bool	ircserv::ircserv_bind(sockaddr_in6 *addr, int sock)
 
 /**
  * @param pollfd structur that holds client fd and events that can be monitored on the fd
- * @param i index
  * @brief store message in str to be used later
  * @return false if syscall recv() faild
 */
-bool	ircserv::ircserv_msg(pollfd* Ps, int i)
+bool	ircserv::ircserv_msg(pollfd& Ps, std::string& str)
 {
-	std::string	str;
 	int			rs;
 	char		buffer[1024];
 	
 	str.clear();
-	rs = recv(Ps[i].fd, buffer, 1024, 0);
+	rs = recv(Ps.fd, buffer, 1024, 0);
 	if (rs == -1)
 		return std::cerr << "Error: recv()" << std::endl, false;
 	if (rs == 0)
 	{
 		std::cerr << "client disconnnected" << std::endl;
-		close(Ps[i].fd);
-		Ps[i].fd = -1;
+		close(Ps.fd);
+		Ps.fd = -1;
 	}
 	str.append(buffer, rs);
 	return (true);
@@ -96,14 +94,16 @@ bool	ircserv::ircserv_msg(pollfd* Ps, int i)
  * @param socket the srver's socket fd
  * @brief accepts new connctions and receive messages from clients
  * @return false if syscall fail otherwise the loop keeps looping
+ * @bug when deconnect a client. its memory remains unused!!!
 */
 bool	ircserv::ircserv_receiv(int sock)
 {
-	pollfd	Ps[MAX_POLLFD];
-	int		num;
-	int		i = 0;
-	int		client;
-	int		rs;
+	pollfd		Ps[MAX_POLLFD];
+	int			num;
+	int			i = 0;
+	int			client;
+	int			rs;
+	std::string str;
 
 	num = 1;
 	bzero(Ps, MAX_POLLFD);
@@ -117,7 +117,9 @@ bool	ircserv::ircserv_receiv(int sock)
 		i = 0;
 		while (i < num)
 		{
-			if (Ps[i].revents & POLLIN)
+			if (Ps[i].fd == -1)
+				;
+			else if (Ps[i].revents & POLLIN)
 			{
 				if (Ps[i].fd == sock)
 				{
@@ -130,13 +132,27 @@ bool	ircserv::ircserv_receiv(int sock)
 						Ps[num].events = POLLIN;
 						std::cout << "new connection established fd == {" << Ps[num].fd << "}" << std::endl;
 						send(Ps[num].fd, "marhba bik m3ana fserver hhhhhh yalah dakhal password albatal: ", 63, 0);
+						clients.push_back(::client());
+						cl[Ps[num].fd] = ::client();
 						num++;
 					}
 				}
 				else
 				{
-					if (ircserv_msg(Ps, i) == false)
+					if (ircserv_msg(Ps[i], str) == false)
 						return false;
+					if (cl[Ps[i].fd].GetAuth() == false)
+					{
+						if (str == password)
+						{
+							std::cout << "pass correct" << std::endl;
+							cl[Ps[i].fd].SetAuth(true);
+						}
+						else
+							std::cout << "pass incorrect" << std::endl;
+					}
+					else
+						std::cout << "hada mziwen hh" << std::endl;
 				}
 			}
 			i++;

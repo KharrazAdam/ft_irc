@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:08:52 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/06 04:21:31 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/06 06:01:12 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@ class ircserv
 private:
 	int						port;
 	std::string				password;
-	std::map<int, client>	clients;
+	std::vector<client>		clients;
+	std::map<int, client>	cl;
 
 	bool	is_num(std::string);
 	bool	ircserv_port(char *);
@@ -38,7 +39,7 @@ private:
 	bool	ircserv_run(void);
 	bool	ircserv_bind(sockaddr_in6 *addr, int sock);
 	bool	ircserv_receiv(int sock);
-	bool	ircserv_msg(pollfd* Ps, int i);
+	bool	ircserv_msg(pollfd& Ps, std::string& str);
 	
 	//<------ a reviser--------->
 	bool	ircserv_add(int client);
