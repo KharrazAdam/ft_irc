@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:27:46 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/05 05:55:38 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/06 02:14:35 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,17 @@
 # ifndef CLIENT_HPP
 # define CLIENT_HPP
 
-#define MAX_POLLFD 200
+
+# include <iostream>
+
 class client
 {
 private:
-	/* data */
+	bool		is_auth;
+	std::string	username;
+	std::string	nickname;
 public:
+	bool	is_authenticated();
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/05 23:23:32 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/06 04:34:20 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,10 @@
 ircserv::ircserv(){};
 ircserv::~ircserv(){};
 
-
+/**
+ * @brief checks if all the str's elemnts are digits
+ * @return true if str is number otherwise false 
+*/
 bool	ircserv::is_num(std::string str)
 {
 	size_t size = str.size();
@@ -28,6 +31,11 @@ bool	ircserv::is_num(std::string str)
 	return (true);
 }
 
+/**
+ * @param av is the second command line's arg
+ * @brief checks if the param is number and checks for it's range 1024 -> 65535
+ * @return true if valid or false otherwise
+*/
 bool	ircserv::ircserv_port(char *av)
 {
 	std::stringstream ss(av);
@@ -41,6 +49,12 @@ bool	ircserv::ircserv_port(char *av)
 	return std::cerr << "Error: port out of range: 1024 -> 65535" << std::endl, false;
 }
 
+/**
+ * @param addr the struct used to store socket's info
+ * @param sock is the file descriptor of server's socket
+ * @brief binds the socket to the provided port and the host's IP adress
+ * @return false if binding faild. otherwise true
+*/
 bool	ircserv::ircserv_bind(sockaddr_in6 *addr, int sock)
 {
 	bzero(addr, sizeof(sockaddr_in6));
@@ -52,18 +66,44 @@ bool	ircserv::ircserv_bind(sockaddr_in6 *addr, int sock)
 	return (true);
 }
 
+/**
+ * @param pollfd structur that holds client fd and events that can be monitored on the fd
+ * @param i index
+ * @brief store message in str to be used later
+ * @return false if syscall recv() faild
+*/
+bool	ircserv::ircserv_msg(pollfd* Ps, int i)
+{
+	std::string	str;
+	int			rs;
+	char		buffer[1024];
+	
+	str.clear();
+	rs = recv(Ps[i].fd, buffer, 1024, 0);
+	if (rs == -1)
+		return std::cerr << "Error: recv()" << std::endl, false;
+	if (rs == 0)
+	{
+		std::cerr << "client disconnnected" << std::endl;
+		close(Ps[i].fd);
+		Ps[i].fd = -1;
+	}
+	str.append(buffer, rs);
+	return (true);
+}
+
+/**
+ * @param socket the srver's socket fd
+ * @brief accepts new connctions and receive messages from clients
+ * @return false if syscall fail otherwise the loop keeps looping
+*/
 bool	ircserv::ircserv_receiv(int sock)
 {
 	pollfd	Ps[MAX_POLLFD];
-	int		rs;
 	int		num;
 	int		i = 0;
 	int		client;
-
-	// <------------------>
-	
-	char	buffer[1024];
-	std::string str;
+	int		rs;
 
 	num = 1;
 	bzero(Ps, MAX_POLLFD);
@@ -81,7 +121,6 @@ bool	ircserv::ircserv_receiv(int sock)
 			{
 				if (Ps[i].fd == sock)
 				{
-					// write(1, "i am here\n", 11);
 					client = accept(sock, NULL, NULL);
 					if (client == -1)
 						return std::cerr << "Error: accept()" << std::endl, false;
@@ -90,22 +129,14 @@ bool	ircserv::ircserv_receiv(int sock)
 						Ps[num].fd = client;
 						Ps[num].events = POLLIN;
 						std::cout << "new connection established fd == {" << Ps[num].fd << "}" << std::endl;
+						send(Ps[num].fd, "marhba bik m3ana fserver hhhhhh yalah dakhal password albatal: ", 63, 0);
 						num++;
 					}
 				}
 				else
 				{
-					str.clear();
-					rs = recv(Ps[i].fd, buffer, 1024, 0);
-					if (rs == -1)
-						return std::cerr << "Error: recv()" << std::endl, false;
-					if (rs == 0)
-					{
-						std::cerr << "client disconnnected" << std::endl;
-						close(Ps[i].fd);
-					}
-					str.append(buffer, rs);
-					std::cout << str;
+					if (ircserv_msg(Ps, i) == false)
+						return false;
 				}
 			}
 			i++;
@@ -114,6 +145,10 @@ bool	ircserv::ircserv_receiv(int sock)
 	return (true);
 }
 
+/**
+ * @brief binds the socket, lListens, and receiving connections
+ * @return false if any inconvenience occurs 
+*/
 bool	ircserv::ircserv_run(void)
 {
 	int				sock;
@@ -125,9 +160,9 @@ bool	ircserv::ircserv_run(void)
 	if (ircserv_bind(&addr, sock) == false)
 		return close(sock), false;
 	if (listen(sock, SOMAXCONN) == -1)
-		return std::cerr << "Error: listen()" << std::endl, false;	
+		return std::cerr << "Error: listen()" << std::endl, close(sock), false;	
 	if (ircserv_receiv(sock) == false)
-		return false;
+		return close(sock), false;
 	return (close(sock), true);
 }
 
