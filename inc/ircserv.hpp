@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:08:52 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/06 06:01:12 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/07 18:22:20 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,13 @@
 # define IRCSERV_HPP
 
 # include <sstream>
+# include <sstream>
 # include <sys/socket.h>
 # include <unistd.h>
 # include <netinet/in.h>
 # include <vector>
 # include <map>
+# include <deque>
 # include "client.hpp"
 # include <poll.h>
 
@@ -40,9 +42,9 @@ private:
 	bool	ircserv_bind(sockaddr_in6 *addr, int sock);
 	bool	ircserv_receiv(int sock);
 	bool	ircserv_msg(pollfd& Ps, std::string& str);
+	bool	ircserv_cmd(std::deque<std::string>&, std::string str);
 	
 	//<------ a reviser--------->
-	bool	ircserv_add(int client);
 
 public:
 	bool	ircserv_start(char **);

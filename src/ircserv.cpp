@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/06 10:49:14 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/07 18:27:40 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,20 @@ bool	ircserv::ircserv_msg(pollfd& Ps, std::string& str)
 	str.append(buffer, rs);
 	return (true);
 }
+/**
+ * @param deq deque to be filled
+ * @param str strint containig the cmd and params
+ * @brief convert cmd from a string to deque
+*/
+bool	ircserv::ircserv_cmd(std::deque<std::string>& deq, std::string str)
+{
+	std::stringstream	ss(str);
+	std::string			splited;
+
+	while (ss >> splited)
+		deq.push_back(splited);
+	return true;
+}
 
 /**
  * @param socket the srver's socket fd
@@ -104,6 +118,7 @@ bool	ircserv::ircserv_receiv(int sock)
 	int			client;
 	int			rs;
 	std::string str;
+	std::deque<std::string> deq;
 
 	num = 1;
 	bzero(Ps, MAX_POLLFD);
@@ -139,20 +154,21 @@ bool	ircserv::ircserv_receiv(int sock)
 				}
 				else
 				{
+					deq.clear();
+					str.clear();
 					if (ircserv_msg(Ps[i], str) == false)
 						return false;
-					if (cl[Ps[i].fd].GetAuth() == false)
+					if (ircserv_cmd(deq, str) == false)
+						return false;
+					if (cl[Ps[num].fd].ShowAuth() == false)
 					{
-						if (str == password)
-						{
-							std::cout << "pass correct" << std::endl;
-							cl[Ps[i].fd].SetAuth(true);
-						}
-						else
-							std::cout << "pass incorrect" << std::endl;
+						if (deq.front() == "PASS")
+							cl[Ps[num].fd].cmd_pass(deq);
 					}
 					else
-						std::cout << "hada mziwen hh" << std::endl;
+					{
+						;
+					}
 				}
 			}
 			i++;

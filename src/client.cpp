@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:38:15 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/06 09:01:16 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/07 18:25:44 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,12 @@ void	client::SetUser(std::string str)
 /**
  * @brief return the auth (either true or false)
 */
-bool	client::GetAuth(void) const
+bool	client::ShowAuth(void) const
 {
 	return this->auth;
 }
 
+bool	client::cmd_pass(std::deque<std::string>&)
+{
+	return ;
+}
