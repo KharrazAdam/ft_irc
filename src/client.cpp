@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:38:15 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/08 17:47:23 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/08 20:38:09 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,20 +53,35 @@ bool	client::ShowAuth(void) const
 	return this->auth;
 }
 
-
-bool	client::cmd_PASS(std::deque<std::string>& deq, std::string& pass)
+std::string&	client::getNick(void)
 {
-	if (ShowAuth() == true)
-		return ERR_ALREADYREGISTERED(), true;
-	if (deq.size() == 1)
-		return ERR_NEEDMOREPARAMS("PASS"), false; // unsufisant params
-	deq.pop_front();
-	if (deq.size() > 1 || deq.front().compare(pass) != 0)
-		return ERR_PASSWDMISMATCH(), false; // wrong password
-	return this->SetAuth(true), true;
+	return nickname;
 }
 
 // COMMANDS
+bool	client::cmd_PASS(std::deque<std::string>& deq, std::string& pass)
+{
+	if (ShowAuth() == true)
+		return ERR_REPETETIVE(" :You may not reregister\n"), true; // ERR_ALREADYREGISTERED
+	if (deq.size() == 1)
+		return ERR_NEEDMOREPARAMS("PASS"), false; // ERR_NEEDMOREPARAMS
+	deq.pop_front();
+	if (deq.size() > 1 || deq.front().compare(pass) != 0)
+		return ERR_REPETETIVE(" :Password incorrect\n"), false; // ERR_PASSWDMISMATCH
+	return this->SetAuth(true), true;
+}
+
+bool	client::cmd_NICK(std::deque<std::string>& deq)
+{
+	if (deq.size() == 1)
+		return ERR_REPETETIVE(" :No nickname given\n"), false; // ERR_NONICKNAMEGIVEN
+	
+	deq.pop_front();
+	return this->SetAuth(true), true;
+}
+
+
+// ERRORS
 
 void	client::ERR_NEEDMOREPARAMS(const char *cmd)
 {
@@ -77,20 +92,11 @@ void	client::ERR_NEEDMOREPARAMS(const char *cmd)
 	send(fd, str.c_str(), str.size(), 0);
 }
 
-void	client::ERR_PASSWDMISMATCH(void)
+void	client::ERR_REPETETIVE(const char* msg)
 {
 	std::string str;
 
 	str.clear();
-	str = nickname + " :Password incorrect\n";
-	send(fd, str.c_str(), str.size(), 0);
-}
-
-void	client::ERR_ALREADYREGISTERED(void)
-{
-	std::string str;
-
-	str.clear();
-	str = nickname + " :You may not reregister\n";
+	str = nickname + msg;
 	send(fd, str.c_str(), str.size(), 0);
 }

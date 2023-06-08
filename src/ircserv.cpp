@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/08 17:44:44 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/08 20:31:12 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,13 @@ bool	ircserv::is_num(std::string str)
  * @brief checks if the param is number and checks for it's range 1024 -> 65535
  * @return true if valid or false otherwise
 */
-bool	ircserv::ircserv_port(char *av)
+bool	ircserv::ircserv_port(const char *av, const char* pass)
 {
 	std::stringstream ss(av);
 
+	if (!pass[0] || std::string(pass).find_first_of(" \t\n\r") != std::string::npos)
+		return (std::cerr << "Error: invalid password" << std::endl, false);
+	
 	if (ss.str().size() > 5 || is_num(ss.str()) == false)
 		return (std::cerr << "Error: invalid port" << std::endl, false);
 	ss >> port;
@@ -113,10 +116,14 @@ bool	ircserv::ircserv_receiv(pollfd& Ps)
 
 	if (ircserv_msg(Ps, str) == false)
 		return false;
-	if (ircserv_cmd(deq, str) == false)
+	if (ircserv_cmd(deq, str) == false || deq.empty())
 		return false;
-	if (!deq.empty() && deq.front() == "PASS")
-		cl[Ps.fd].cmd_PASS(deq, password);
+	if (deq.front() == "PASS")
+		return cl[Ps.fd].cmd_PASS(deq, password);	
+	if (cl[Ps.fd].ShowAuth() == false)
+		return false;
+	else if (deq.front() == "NICK")
+		cl[Ps.fd].cmd_NICK(deq);
 	return true;
 }
 
@@ -196,11 +203,9 @@ bool	ircserv::ircserv_run(void)
 
 bool	ircserv::ircserv_start(char **av)
 {
-	if (ircserv_port(av[1]) == false)
+	if (ircserv_port(av[1], av[2]) == false)
 		return false;
 	password = av[2];
-	if (ircserv_port(av[1]) == false)
-		return false;
 	if (ircserv_run() == false)
 		return false;
 	return true;
