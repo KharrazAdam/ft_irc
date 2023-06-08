@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/07 18:27:40 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/08 17:44:44 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,10 +85,12 @@ bool	ircserv::ircserv_msg(pollfd& Ps, std::string& str)
 		std::cerr << "client disconnnected" << std::endl;
 		close(Ps.fd);
 		Ps.fd = -1;
+		return false;
 	}
 	str.append(buffer, rs);
 	return (true);
 }
+
 /**
  * @param deq deque to be filled
  * @param str strint containig the cmd and params
@@ -104,21 +106,49 @@ bool	ircserv::ircserv_cmd(std::deque<std::string>& deq, std::string str)
 	return true;
 }
 
+bool	ircserv::ircserv_receiv(pollfd& Ps)
+{
+	std::string str;
+	std::deque<std::string> deq;
+
+	if (ircserv_msg(Ps, str) == false)
+		return false;
+	if (ircserv_cmd(deq, str) == false)
+		return false;
+	if (!deq.empty() && deq.front() == "PASS")
+		cl[Ps.fd].cmd_PASS(deq, password);
+	return true;
+}
+
+bool	ircserv::ircserv_connect(pollfd& Ps, int sock, int *num)
+{
+	int			client;
+
+	client = accept(sock, NULL, NULL);
+	if (client == -1)
+		return std::cerr << "Error: accept()" << std::endl, false;
+	else
+	{
+		Ps.fd = client;
+		Ps.events = POLLIN;
+		std::cout << "new connection established fd == {" << Ps.fd << "}" << std::endl;
+		cl[Ps.fd] = ::client(Ps.fd);
+		(*num)++;
+	}
+	return true;
+}
+
 /**
  * @param socket the srver's socket fd
  * @brief accepts new connctions and receive messages from clients
  * @return false if syscall fail otherwise the loop keeps looping
  * @bug when deconnect a client. its memory remains unused!!!
 */
-bool	ircserv::ircserv_receiv(int sock)
+bool	ircserv::ircserv_serv(int sock)
 {
 	pollfd		Ps[MAX_POLLFD];
 	int			num;
-	int			i = 0;
-	int			client;
 	int			rs;
-	std::string str;
-	std::deque<std::string> deq;
 
 	num = 1;
 	bzero(Ps, MAX_POLLFD);
@@ -129,49 +159,15 @@ bool	ircserv::ircserv_receiv(int sock)
 		rs = poll(Ps, MAX_POLLFD, -1);
 		if (rs == -1)
 			return std::cerr << "Error: poll()" << std::endl, false;
-		i = 0;
-		while (i < num)
+		for (int i = 0; i < num; i++)
 		{
-			if (Ps[i].fd == -1)
-				;
-			else if (Ps[i].revents & POLLIN)
+			if (Ps[i].revents & POLLIN)
 			{
 				if (Ps[i].fd == sock)
-				{
-					client = accept(sock, NULL, NULL);
-					if (client == -1)
-						return std::cerr << "Error: accept()" << std::endl, false;
-					else
-					{
-						Ps[num].fd = client;
-						Ps[num].events = POLLIN;
-						std::cout << "new connection established fd == {" << Ps[num].fd << "}" << std::endl;
-						send(Ps[num].fd, "marhba bik m3ana fserver hhhhhh yalah dakhal password albatal: ", 63, 0);
-						clients.push_back(::client());
-						cl[Ps[num].fd] = ::client();
-						num++;
-					}
-				}
+					ircserv_connect(Ps[num],  sock, &num);
 				else
-				{
-					deq.clear();
-					str.clear();
-					if (ircserv_msg(Ps[i], str) == false)
-						return false;
-					if (ircserv_cmd(deq, str) == false)
-						return false;
-					if (cl[Ps[num].fd].ShowAuth() == false)
-					{
-						if (deq.front() == "PASS")
-							cl[Ps[num].fd].cmd_pass(deq);
-					}
-					else
-					{
-						;
-					}
-				}
+					ircserv_receiv(Ps[i]);
 			}
-			i++;
 		}
 	}
 	return (true);
@@ -193,7 +189,7 @@ bool	ircserv::ircserv_run(void)
 		return close(sock), false;
 	if (listen(sock, SOMAXCONN) == -1)
 		return std::cerr << "Error: listen()" << std::endl, close(sock), false;	
-	if (ircserv_receiv(sock) == false)
+	if (ircserv_serv(sock) == false)
 		return close(sock), false;
 	return (close(sock), true);
 }
