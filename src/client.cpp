@@ -6,7 +6,11 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:38:15 by akharraz          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2023/06/09 20:11:03 by akharraz         ###   ########.fr       */
+=======
+/*   Updated: 2023/06/08 20:38:09 by akharraz         ###   ########.fr       */
+>>>>>>> b9b2f1660b9844703759541c9af40f437c31ac1c
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +63,7 @@ std::string&	client::getNick(void)
 }
 
 // COMMANDS
+<<<<<<< HEAD
 /**
  * @note please recode this function in a clean way
 */
@@ -78,6 +83,33 @@ bool	client::cmd_PASS(std::deque<std::string>& deq, std::string& pass)
  * @note please recode this function in a clean way
 */
 bool	client::cmd_NICK(std::deque<std::string>& deq, std::map<int, client>& cl)
+=======
+bool	client::cmd_PASS(std::deque<std::string>& deq, std::string& pass)
+{
+	if (ShowAuth() == true)
+		return ERR_REPETETIVE(" :You may not reregister\n"), true; // ERR_ALREADYREGISTERED
+	if (deq.size() == 1)
+		return ERR_NEEDMOREPARAMS("PASS"), false; // ERR_NEEDMOREPARAMS
+	deq.pop_front();
+	if (deq.size() > 1 || deq.front().compare(pass) != 0)
+		return ERR_REPETETIVE(" :Password incorrect\n"), false; // ERR_PASSWDMISMATCH
+	return this->SetAuth(true), true;
+}
+
+bool	client::cmd_NICK(std::deque<std::string>& deq)
+{
+	if (deq.size() == 1)
+		return ERR_REPETETIVE(" :No nickname given\n"), false; // ERR_NONICKNAMEGIVEN
+	
+	deq.pop_front();
+	return this->SetAuth(true), true;
+}
+
+
+// ERRORS
+
+void	client::ERR_NEEDMOREPARAMS(const char *cmd)
+>>>>>>> b9b2f1660b9844703759541c9af40f437c31ac1c
 {
 	std::map<int, client>::iterator it = cl.begin();
 	std::string	old(nickname);
@@ -99,7 +131,11 @@ bool	client::cmd_NICK(std::deque<std::string>& deq, std::map<int, client>& cl)
 	return send_error("NICK NAME DONE"), true;
 }
 
+<<<<<<< HEAD
 bool	client::cmd_USER(std::deque<std::string>& a)
+=======
+void	client::ERR_REPETETIVE(const char* msg)
+>>>>>>> b9b2f1660b9844703759541c9af40f437c31ac1c
 {
 	(void)a;
 	return true;
@@ -111,6 +147,7 @@ void	client::send_message(const char* er) const
 		std::string str;
 
 	str.clear();
+<<<<<<< HEAD
 	str.append("MESSAGE ") += er;
 	if (send(fd, str.append("\n").c_str(), str.size() + 1, 0) == -1)
 		send_message(er);
@@ -125,3 +162,8 @@ void	client::send_error(const char* er) const
 	if (send(fd, str.append("\n").c_str(), str.size() + 1, 0) == -1)
 		send_error(er);
 }
+=======
+	str = nickname + msg;
+	send(fd, str.c_str(), str.size(), 0);
+}
+>>>>>>> b9b2f1660b9844703759541c9af40f437c31ac1c

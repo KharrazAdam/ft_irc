@@ -6,7 +6,11 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2023/06/09 20:10:41 by akharraz         ###   ########.fr       */
+=======
+/*   Updated: 2023/06/08 20:31:12 by akharraz         ###   ########.fr       */
+>>>>>>> b9b2f1660b9844703759541c9af40f437c31ac1c
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,9 +128,13 @@ bool	ircserv::ircserv_receiv(pollfd& Ps)
 	if (cl[Ps.fd].ShowAuth() == false)
 		return false;
 	else if (deq.front() == "NICK")
+<<<<<<< HEAD
 		cl[Ps.fd].cmd_NICK(deq, cl);
 	else if (deq.front() == "USER")
 		cl[Ps.fd].cmd_USER(deq);
+=======
+		cl[Ps.fd].cmd_NICK(deq);
+>>>>>>> b9b2f1660b9844703759541c9af40f437c31ac1c
 	return true;
 }
 
