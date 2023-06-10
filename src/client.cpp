@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:38:15 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/08 17:47:23 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/09 20:11:03 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
  * @name Deafault constructor
  * @brief set auth to false; auth will be changed to 'true' when client will insert correct password
 */
-client::client(int fds):fd(fds), auth(false), username("unknown"), nickname("unknown"){}
-client::client():auth(false), username("unknown"), nickname("unknown"){}
+client::client(int fds):fd(fds), auth(false), username("unknown"), nickname("unknown"), addr("nickname!user@host"){}
+client::client():auth(false), username("unknown"), nickname("unknown"), addr("nickname!user@host"){}
 
 client::~client(){}
 
@@ -53,44 +53,75 @@ bool	client::ShowAuth(void) const
 	return this->auth;
 }
 
-
-bool	client::cmd_PASS(std::deque<std::string>& deq, std::string& pass)
+std::string&	client::getNick(void)
 {
-	if (ShowAuth() == true)
-		return ERR_ALREADYREGISTERED(), true;
-	if (deq.size() == 1)
-		return ERR_NEEDMOREPARAMS("PASS"), false; // unsufisant params
-	deq.pop_front();
-	if (deq.size() > 1 || deq.front().compare(pass) != 0)
-		return ERR_PASSWDMISMATCH(), false; // wrong password
-	return this->SetAuth(true), true;
+	return nickname;
 }
 
 // COMMANDS
-
-void	client::ERR_NEEDMOREPARAMS(const char *cmd)
+/**
+ * @note please recode this function in a clean way
+*/
+bool	client::cmd_PASS(std::deque<std::string>& deq, std::string& pass)
 {
-	std::string str;
-
-	str.clear();
-	str = nickname + " " + cmd + " :Not enough parameters\n";
-	send(fd, str.c_str(), str.size(), 0);
+	if (ShowAuth() == true)
+		return send_error("ERR_ALREADYREGISTERED"), true; // ERR_ALREADYREGISTERED
+	if (deq.size() == 1)
+		return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
+	deq.pop_front();
+	if (deq.size() > 1 || deq.front().compare(pass) != 0)
+		return send_error("ERR_PASSWDMISMATCH"), false; // ERR_PASSWDMISMATCH
+	return this->SetAuth(true), true;
 }
 
-void	client::ERR_PASSWDMISMATCH(void)
+/**
+ * @note please recode this function in a clean way
+*/
+bool	client::cmd_NICK(std::deque<std::string>& deq, std::map<int, client>& cl)
 {
-	std::string str;
+	std::map<int, client>::iterator it = cl.begin();
+	std::string	old(nickname);
 
-	str.clear();
-	str = nickname + " :Password incorrect\n";
-	send(fd, str.c_str(), str.size(), 0);
+	if (deq.size() == 1)
+		return send_error("ERR_NONICKNAMEGIVEN"), false; // ERR_NONICKNAMEGIVEN
+	deq.pop_front();
+	if (deq.size() > 1 || deq.front()[0] == '#' || deq.front()[0] == ':' || deq.front().substr(0, 2) == "#&" || deq.front().substr(0, 2) == "&#")
+		return send_error("ERR_ERRONEUSNICKNAME"), false; // ERR_ERRONEUSNICKNAME
+	if (deq.front().size() < 3)
+		return send_error("ERR_ERRONEUSNICKNAME"), false;
+	while (it != cl.end())
+	{
+		if ((*it).second.nickname == deq.front())
+			return send_error("ERR_NICKNAMEINUSE"), false; // ERR_NICKNAMEINUSE	
+		it++;
+	}
+	nickname = deq.front();
+	return send_error("NICK NAME DONE"), true;
 }
 
-void	client::ERR_ALREADYREGISTERED(void)
+bool	client::cmd_USER(std::deque<std::string>& a)
+{
+	(void)a;
+	return true;
+}
+
+
+void	client::send_message(const char* er) const
+{
+		std::string str;
+
+	str.clear();
+	str.append("MESSAGE ") += er;
+	if (send(fd, str.append("\n").c_str(), str.size() + 1, 0) == -1)
+		send_message(er);
+}
+
+void	client::send_error(const char* er) const
 {
 	std::string str;
 
 	str.clear();
-	str = nickname + " :You may not reregister\n";
-	send(fd, str.c_str(), str.size(), 0);
+	str.append("Error ") += er;
+	if (send(fd, str.append("\n").c_str(), str.size() + 1, 0) == -1)
+		send_error(er);
 }
