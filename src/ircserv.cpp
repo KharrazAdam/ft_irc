@@ -6,11 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2023/06/09 20:10:41 by akharraz         ###   ########.fr       */
-=======
-/*   Updated: 2023/06/08 20:31:12 by akharraz         ###   ########.fr       */
->>>>>>> b9b2f1660b9844703759541c9af40f437c31ac1c
+/*   Updated: 2023/06/11 02:32:52 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +15,14 @@
 
 ircserv::ircserv(){};
 ircserv::~ircserv(){};
+
+std::string makeUppercase(const std::string& str)
+{
+	std::string result = str;
+	for (std::string::iterator it = result.begin(); it != result.end(); ++it)
+	    *it = std::toupper(*it);
+	return result;
+}
 
 /**
  * @brief checks if all the str's elemnts are digits
@@ -111,6 +115,9 @@ bool	ircserv::ircserv_cmd(std::deque<std::string>& deq, std::string str)
 
 	while (ss >> splited)
 		deq.push_back(splited);
+	if (deq.empty() == true)
+		return false;
+	deq.front() = makeUppercase(deq.front());
 	return true;
 }
 
@@ -121,20 +128,18 @@ bool	ircserv::ircserv_receiv(pollfd& Ps)
 
 	if (ircserv_msg(Ps, str) == false)
 		return false;
-	if (ircserv_cmd(deq, str) == false || deq.empty())
+	if (ircserv_cmd(deq, str) == false)
 		return false;
 	if (deq.front() == "PASS")
 		return cl[Ps.fd].cmd_PASS(deq, password);	
 	if (cl[Ps.fd].ShowAuth() == false)
 		return false;
 	else if (deq.front() == "NICK")
-<<<<<<< HEAD
 		cl[Ps.fd].cmd_NICK(deq, cl);
 	else if (deq.front() == "USER")
 		cl[Ps.fd].cmd_USER(deq);
-=======
-		cl[Ps.fd].cmd_NICK(deq);
->>>>>>> b9b2f1660b9844703759541c9af40f437c31ac1c
+	else if (deq.front() == "JOIN")
+		;
 	return true;
 }
 

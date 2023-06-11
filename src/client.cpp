@@ -6,31 +6,37 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:38:15 by akharraz          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2023/06/09 20:11:03 by akharraz         ###   ########.fr       */
-=======
-/*   Updated: 2023/06/08 20:38:09 by akharraz         ###   ########.fr       */
->>>>>>> b9b2f1660b9844703759541c9af40f437c31ac1c
+/*   Updated: 2023/06/11 02:47:36 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client.hpp"
 
+bool	is_alpha_valid(std::string& str)
+{
+	int	size = str.size();
+
+	for (int i = 0; i < size; i++)
+		if (std::isalpha(str[i]) == false && str[i] != ' ')
+			return false;
+	return true;
+}
+
 /**
  * @name Deafault constructor
  * @brief set auth to false; auth will be changed to 'true' when client will insert correct password
 */
-client::client(int fds):fd(fds), auth(false), username("unknown"), nickname("unknown"), addr("nickname!user@host"){}
-client::client():auth(false), username("unknown"), nickname("unknown"), addr("nickname!user@host"){}
+client::client(int fds):fd(fds), auth(0), username(""), nickname(""), addr("nickname!user@host"){}
+client::client():auth(0), username(""), nickname(""), addr("nickname!user@host"){}
 
 client::~client(){}
 
 /**
  * @brief change auth to 'status';
 */
-void	client::SetAuth(bool status)
+void	client::SetAuth(int status)
 {
-	this->auth = status;
+	this->auth |= status;
 }
 
 /**
@@ -63,7 +69,6 @@ std::string&	client::getNick(void)
 }
 
 // COMMANDS
-<<<<<<< HEAD
 /**
  * @note please recode this function in a clean way
 */
@@ -76,40 +81,13 @@ bool	client::cmd_PASS(std::deque<std::string>& deq, std::string& pass)
 	deq.pop_front();
 	if (deq.size() > 1 || deq.front().compare(pass) != 0)
 		return send_error("ERR_PASSWDMISMATCH"), false; // ERR_PASSWDMISMATCH
-	return this->SetAuth(true), true;
+	return this->SetAuth(PASSWORD), true;
 }
 
 /**
  * @note please recode this function in a clean way
 */
 bool	client::cmd_NICK(std::deque<std::string>& deq, std::map<int, client>& cl)
-=======
-bool	client::cmd_PASS(std::deque<std::string>& deq, std::string& pass)
-{
-	if (ShowAuth() == true)
-		return ERR_REPETETIVE(" :You may not reregister\n"), true; // ERR_ALREADYREGISTERED
-	if (deq.size() == 1)
-		return ERR_NEEDMOREPARAMS("PASS"), false; // ERR_NEEDMOREPARAMS
-	deq.pop_front();
-	if (deq.size() > 1 || deq.front().compare(pass) != 0)
-		return ERR_REPETETIVE(" :Password incorrect\n"), false; // ERR_PASSWDMISMATCH
-	return this->SetAuth(true), true;
-}
-
-bool	client::cmd_NICK(std::deque<std::string>& deq)
-{
-	if (deq.size() == 1)
-		return ERR_REPETETIVE(" :No nickname given\n"), false; // ERR_NONICKNAMEGIVEN
-	
-	deq.pop_front();
-	return this->SetAuth(true), true;
-}
-
-
-// ERRORS
-
-void	client::ERR_NEEDMOREPARAMS(const char *cmd)
->>>>>>> b9b2f1660b9844703759541c9af40f437c31ac1c
 {
 	std::map<int, client>::iterator it = cl.begin();
 	std::string	old(nickname);
@@ -117,38 +95,58 @@ void	client::ERR_NEEDMOREPARAMS(const char *cmd)
 	if (deq.size() == 1)
 		return send_error("ERR_NONICKNAMEGIVEN"), false; // ERR_NONICKNAMEGIVEN
 	deq.pop_front();
-	if (deq.size() > 1 || deq.front()[0] == '#' || deq.front()[0] == ':' || deq.front().substr(0, 2) == "#&" || deq.front().substr(0, 2) == "&#")
+	if (deq.size() > 1 || deq.front().size() < 3 || deq.front()[0] == '#' || deq.front()[0] == ':' || deq.front().substr(0, 2) == "#&" || deq.front().substr(0, 2) == "&#")
 		return send_error("ERR_ERRONEUSNICKNAME"), false; // ERR_ERRONEUSNICKNAME
-	if (deq.front().size() < 3)
-		return send_error("ERR_ERRONEUSNICKNAME"), false;
 	while (it != cl.end())
 	{
 		if ((*it).second.nickname == deq.front())
-			return send_error("ERR_NICKNAMEINUSE"), false; // ERR_NICKNAMEINUSE	
+			return send_message("ERR_NICKNAMEINUSE"), false; // ERR_NICKNAMEINUSE	
 		it++;
 	}
 	nickname = deq.front();
-	return send_error("NICK NAME DONE"), true;
+	auth |= NICKNAME;
+	if (!(auth & AUTHENTIFICATED))
+		; // send welcome
+	return send_message("NICK NAME DONE"), true;
 }
 
-<<<<<<< HEAD
-bool	client::cmd_USER(std::deque<std::string>& a)
-=======
-void	client::ERR_REPETETIVE(const char* msg)
->>>>>>> b9b2f1660b9844703759541c9af40f437c31ac1c
+bool	client::cmd_USER(std::deque<std::string>& deq)
 {
-	(void)a;
+	if (auth & AUTHENTIFICATED)
+		return send_error("ERR_ALREADYREGISTRED"), false; // ERR_ALREADYREGISTRED
+	if (deq.size() < 5)
+		return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
+	if (deq[2] != "0" || deq[3] != "*" || deq[4][0] != ':')
+		return send_error("ERROR SYNTAX"), false; // ERR_chars
+	deq.pop_front();
+	username = deq.front();
+	for (size_t i = 0; i < 3; i++)
+		deq.pop_front();
+	if (is_alpha_valid(username) == false)
+		return send_error("ERROR NON VALID CHARS"), username.clear(), false; // ERR_chars
+	deq.front().erase(deq.front().begin());
+	while (1)
+	{
+		realname += deq.front();
+		deq.pop_front();
+		if (is_alpha_valid(realname) == false)
+			return send_error("ERROR NON VALID CHARS"), realname.clear(), false; // ERR_chars
+		if (deq.empty() == true)
+			break ;
+		realname += " ";
+	}
+	auth |= USERNAME;
+	if (auth & NICKNAME)
+		; // send welcome
 	return true;
 }
-
 
 void	client::send_message(const char* er) const
 {
 		std::string str;
 
 	str.clear();
-<<<<<<< HEAD
-	str.append("MESSAGE ") += er;
+	str.append("MESSAGE ") += nickname + " " + er;
 	if (send(fd, str.append("\n").c_str(), str.size() + 1, 0) == -1)
 		send_message(er);
 }
@@ -158,12 +156,13 @@ void	client::send_error(const char* er) const
 	std::string str;
 
 	str.clear();
-	str.append("Error ") += er;
+	str.append("Error ") += nickname + ": " + er;
 	if (send(fd, str.append("\n").c_str(), str.size() + 1, 0) == -1)
 		send_error(er);
 }
-=======
-	str = nickname + msg;
-	send(fd, str.c_str(), str.size(), 0);
+
+void	client::RPL_WELCOME(void)
+{
+	auth |= AUTHENTIFICATED;
+	send(fd, "<client> :Welcome to the <networkname> Network, <nick>[!<user>@<host>]\n",72, 0);
 }
->>>>>>> b9b2f1660b9844703759541c9af40f437c31ac1c
