@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/11 02:32:52 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/11 23:40:26 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ bool	ircserv::ircserv_msg(pollfd& Ps, std::string& str)
 	if (rs == 0)
 	{
 		std::cerr << "client disconnnected" << std::endl;
-		cl.erase(Ps.fd);
+		user.erase(Ps.fd);
 		close(Ps.fd);
 		Ps.fd = -1;
 		return false;
@@ -121,6 +121,19 @@ bool	ircserv::ircserv_cmd(std::deque<std::string>& deq, std::string str)
 	return true;
 }
 
+char	ircserv::ircserv_auth(pollfd& Ps, std::deque<std::string>& deq)
+{
+	if (deq.front() == "PASS")
+		return user[Ps.fd].cmd_PASS(deq, password);	
+	if ((user[Ps.fd].ShowAuth() & PASSWORD) == 0)
+		return false;
+	else if (deq.front() == "NICK")
+		return user[Ps.fd].cmd_NICK(deq, user);
+	else if (deq.front() == "USER")
+		return user[Ps.fd].cmd_USER(deq);
+	return 2;
+}
+
 bool	ircserv::ircserv_receiv(pollfd& Ps)
 {
 	std::string str;
@@ -130,16 +143,12 @@ bool	ircserv::ircserv_receiv(pollfd& Ps)
 		return false;
 	if (ircserv_cmd(deq, str) == false)
 		return false;
-	if (deq.front() == "PASS")
-		return cl[Ps.fd].cmd_PASS(deq, password);	
-	if (cl[Ps.fd].ShowAuth() == false)
+	if (ircserv_auth(Ps, deq) != 2)
+		return true;
+	if ((user[Ps.fd].ShowAuth() & AUTHENTIFICATED) == 0)
 		return false;
-	else if (deq.front() == "NICK")
-		cl[Ps.fd].cmd_NICK(deq, cl);
-	else if (deq.front() == "USER")
-		cl[Ps.fd].cmd_USER(deq);
-	else if (deq.front() == "JOIN")
-		;
+	if (deq.front() == "JOIN")
+		return user[Ps.fd].cmd_JOIN(deq, channels);		
 	return true;
 }
 
@@ -155,7 +164,7 @@ bool	ircserv::ircserv_connect(pollfd& Ps, int sock, int *num)
 		Ps.fd = client;
 		Ps.events = POLLIN;
 		std::cout << "new connection established fd == {" << Ps.fd << "}" << std::endl;
-		cl[Ps.fd] = ::client(Ps.fd);
+		user[Ps.fd] = ::client(Ps.fd);
 		(*num)++;
 	}
 	return true;

@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:08:52 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/08 20:27:33 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/11 23:26:54 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,18 @@
 # define IRCSERV_HPP
 
 # include <sstream>
-# include <sstream>
-# include <sys/socket.h>
 # include <unistd.h>
+# include <sstream>
+
+# include <sys/socket.h>
+# include <poll.h>
 # include <netinet/in.h>
+
 # include <vector>
 # include <map>
 # include <deque>
+
 # include "client.hpp"
-# include <poll.h>
 
 # define TCP_MSS 1460
 # define MAX_POLLFD 200
@@ -30,9 +33,10 @@
 class ircserv
 {
 private:
-	int						port;
-	std::string				password;
-	std::map<int, client>	cl;
+	int								port;
+	std::string						password;
+	std::map<int, client>			user;
+	std::map<std::string&, Channel>	channels;
 
 	bool	is_num(std::string);
 	bool	ircserv_port(const char*, const char *);
@@ -43,7 +47,7 @@ private:
 	bool	ircserv_connect(pollfd& Ps, int sock, int *num);
 	bool	ircserv_msg(pollfd& Ps, std::string& str);
 	bool	ircserv_cmd(std::deque<std::string>&, std::string str);
-	
+	char	ircserv_auth(pollfd& Ps, std::deque<std::string>& deq);
 	//<------ a reviser--------->
 
 public:

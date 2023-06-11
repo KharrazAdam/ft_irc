@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:38:15 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/11 02:47:36 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/11 23:21:05 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,14 +58,19 @@ void	client::SetUser(std::string str)
 /**
  * @brief return the auth (either true or false)
 */
-bool	client::ShowAuth(void) const
+int	client::ShowAuth(void)
 {
-	return this->auth;
+	return auth;
 }
 
 std::string&	client::getNick(void)
 {
 	return nickname;
+}
+
+int&	client::getFd(void)
+{
+	return fd;
 }
 
 // COMMANDS
@@ -74,14 +79,14 @@ std::string&	client::getNick(void)
 */
 bool	client::cmd_PASS(std::deque<std::string>& deq, std::string& pass)
 {
-	if (ShowAuth() == true)
+	if (auth & PASSWORD)
 		return send_error("ERR_ALREADYREGISTERED"), true; // ERR_ALREADYREGISTERED
 	if (deq.size() == 1)
 		return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
 	deq.pop_front();
 	if (deq.size() > 1 || deq.front().compare(pass) != 0)
 		return send_error("ERR_PASSWDMISMATCH"), false; // ERR_PASSWDMISMATCH
-	return this->SetAuth(PASSWORD), true;
+	return auth |= PASSWORD, true;
 }
 
 /**
@@ -105,8 +110,11 @@ bool	client::cmd_NICK(std::deque<std::string>& deq, std::map<int, client>& cl)
 	}
 	nickname = deq.front();
 	auth |= NICKNAME;
-	if (!(auth & AUTHENTIFICATED))
-		; // send welcome
+	if ((auth & USERNAME))
+	{
+		auth |= AUTHENTIFICATED;
+		RPL_WELCOME(); // send welcome
+	}
 	return send_message("NICK NAME DONE"), true;
 }
 
@@ -122,24 +130,24 @@ bool	client::cmd_USER(std::deque<std::string>& deq)
 	username = deq.front();
 	for (size_t i = 0; i < 3; i++)
 		deq.pop_front();
-	if (is_alpha_valid(username) == false)
-		return send_error("ERROR NON VALID CHARS"), username.clear(), false; // ERR_chars
 	deq.front().erase(deq.front().begin());
 	while (1)
 	{
 		realname += deq.front();
 		deq.pop_front();
-		if (is_alpha_valid(realname) == false)
-			return send_error("ERROR NON VALID CHARS"), realname.clear(), false; // ERR_chars
 		if (deq.empty() == true)
 			break ;
 		realname += " ";
 	}
 	auth |= USERNAME;
-	if (auth & NICKNAME)
-		; // send welcome
+	if ((auth & NICKNAME))
+	{
+		auth |= AUTHENTIFICATED;
+		RPL_WELCOME(); // send welcome
+	}
 	return true;
 }
+
 
 void	client::send_message(const char* er) const
 {
@@ -163,6 +171,5 @@ void	client::send_error(const char* er) const
 
 void	client::RPL_WELCOME(void)
 {
-	auth |= AUTHENTIFICATED;
 	send(fd, "<client> :Welcome to the <networkname> Network, <nick>[!<user>@<host>]\n",72, 0);
 }
