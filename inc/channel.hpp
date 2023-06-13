@@ -27,10 +27,16 @@ public:
 private:
 	std::vector<int> 			mods;
 	std::map<std::string, int> users;
-	// std::map<std::string, int> invited;
-	std::string 				title;
-	std::string 				key;
-	int							num;
+	std::map<std::string, int> invited;
+
+	std::string	title;
+	std::string	key;
+	std::string	topic;
+	
+
+	size_t		l;
+	bool	k;
+	bool	i;
 };
 #include "client.hpp"
 #endif

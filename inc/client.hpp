@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:27:46 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/13 17:58:10 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/13 21:11:10 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,11 +53,16 @@ public:
 	std::string		getNick(void);
 	int				getFd(void);
 	// <-----commands------->
-	
+	// PASS
 	bool	cmd_PASS(std::deque<std::string>&, std::string&);
+	// NICK
 	bool	cmd_NICK(std::deque<std::string>&, std::map<int, client>& cl);
+	// USER
 	bool	cmd_USER(std::deque<std::string>&);
+	// JOIN
 	bool	cmd_JOIN(std::deque<std::string>&, std::map<std::string, Channel>&);
+	void	com_sep(std::deque<std::string>& deq, std::vector<std::string>& vec);
+	// ....
 	bool	cmd_SHOW(std::deque<std::string>&, std::map<std::string, Channel>&);
 	// <-----errors--------->
 	
