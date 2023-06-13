@@ -6,7 +6,7 @@
 /*   By: mzridi <mzridi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 17:11:18 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/14 00:27:16 by mzridi           ###   ########.fr       */
+/*   Updated: 2023/06/14 00:45:21 by mzridi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,5 +92,21 @@ bool Channel::addMod(int fd)
 			return false;
 	}
 	mods.push_back(fd);
+	return true;
+}
+
+bool Channel::setTopic(std::string &topic, client &cl)
+{
+	if (users.find(cl.getNick()) == users.end())
+	{
+		cl.send_error("ERR_NOTONCHANNEL");
+		return false;
+	}
+    if(t && std::find(mods.begin(), mods.end(), cl.getFd()) == mods.end())
+	{
+		cl.send_error("ERR_CHANOPRIVSNEEDED");
+		return false;
+	}
+	this->topic = topic;
 	return true;
 }

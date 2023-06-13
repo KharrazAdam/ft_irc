@@ -6,7 +6,7 @@
 /*   By: mzridi <mzridi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:38:15 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/14 00:35:35 by mzridi           ###   ########.fr       */
+/*   Updated: 2023/06/14 00:57:46 by mzridi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,6 +204,22 @@ bool client::cmd_KICK(std::deque<std::string>& deq, std::map<std::string,Channel
 		return send_error("ERR_CHANOPRIVSNEEDED"), false; // ERR_CHANOPRIVSNEEDED
 	for (size_t i = 0; i < nicks.size(); i++)
 		channel->kickUser(nicks[i], *this);
+	return true;
+}
+
+bool client::cmd_TOPIC(std::deque<std::string> & deq, std::map<std::string, Channel> & channels)
+{
+	std::string	chan;
+	std::string	topic;
+	
+    if (deq.size() < 2)
+		return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
+	chan = deq[1];
+	deq.pop_front();
+	topic = deq.front();
+	if (channels.find(chan) == channels.end())
+		return send_error("ERR_NOSUCHCHANNEL"), false; // ERR_NOSUCHCHANNEL
+	channels[chan].setTopic(topic, *this);
 	return true;
 }
 

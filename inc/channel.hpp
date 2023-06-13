@@ -28,6 +28,7 @@ public:
 	std::vector<int>&	getMods(void);
 	bool			kickUser(std::string &nick, client &cl);
 	bool			addMod(int fd);
+	bool			setTopic(std::string &topic, client &cl);
 private:
 	std::vector<int> 			mods;
 	std::map<std::string, int> users;
@@ -41,6 +42,7 @@ private:
 	size_t		l;
 	bool	k;
 	bool	i;
+	bool	t;
 };
 #include "client.hpp"
 #endif
