@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:38:15 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/11 23:21:05 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/13 18:11:11 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,12 @@ int	client::ShowAuth(void)
 	return auth;
 }
 
-std::string&	client::getNick(void)
+std::string	client::getNick(void)
 {
 	return nickname;
 }
 
-int&	client::getFd(void)
+int	client::getFd(void)
 {
 	return fd;
 }
@@ -124,7 +124,7 @@ bool	client::cmd_USER(std::deque<std::string>& deq)
 		return send_error("ERR_ALREADYREGISTRED"), false; // ERR_ALREADYREGISTRED
 	if (deq.size() < 5)
 		return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
-	if (deq[2] != "0" || deq[3] != "*" || deq[4][0] != ':')
+	if (deq[4][0] != ':')
 		return send_error("ERROR SYNTAX"), false; // ERR_chars
 	deq.pop_front();
 	username = deq.front();

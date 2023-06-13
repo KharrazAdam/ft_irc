@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:27:46 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/11 23:29:56 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/13 17:58:10 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,14 +50,15 @@ public:
 	client();
 	~client();
 	int				ShowAuth(void);
-	std::string&	getNick(void);
-	int&	getFd(void);
+	std::string		getNick(void);
+	int				getFd(void);
 	// <-----commands------->
 	
 	bool	cmd_PASS(std::deque<std::string>&, std::string&);
 	bool	cmd_NICK(std::deque<std::string>&, std::map<int, client>& cl);
 	bool	cmd_USER(std::deque<std::string>&);
-	bool	cmd_JOIN(std::deque<std::string>&, std::map<std::string&, Channel>&);
+	bool	cmd_JOIN(std::deque<std::string>&, std::map<std::string, Channel>&);
+	bool	cmd_SHOW(std::deque<std::string>&, std::map<std::string, Channel>&);
 	// <-----errors--------->
 	
 	void	send_error(const char *) const;

@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:08:52 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/11 23:26:54 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/13 00:40:54 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ private:
 	int								port;
 	std::string						password;
 	std::map<int, client>			user;
-	std::map<std::string&, Channel>	channels;
+	std::map<std::string, Channel>	channels;
 
 	bool	is_num(std::string);
 	bool	ircserv_port(const char*, const char *);

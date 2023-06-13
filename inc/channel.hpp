@@ -19,13 +19,18 @@ class Channel
 {
 public:
 	Channel();
+	Channel(std::string, std::string);
 	~Channel();
-	bool	add_user(client&);
+	bool			add_user(client& cl);
+	std::string&	GetKey(void);
+	void			show_details();
 private:
-	std::vector<int> mods;
-	std::map<int, std::string&> users;
-	std::string title;
-	std::string key;
+	std::vector<int> 			mods;
+	std::map<std::string, int> users;
+	// std::map<std::string, int> invited;
+	std::string 				title;
+	std::string 				key;
+	int							num;
 };
 #include "client.hpp"
 #endif

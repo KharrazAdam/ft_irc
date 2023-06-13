@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/11 23:40:26 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/13 17:44:10 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,13 +123,13 @@ bool	ircserv::ircserv_cmd(std::deque<std::string>& deq, std::string str)
 
 char	ircserv::ircserv_auth(pollfd& Ps, std::deque<std::string>& deq)
 {
-	if (deq.front() == "PASS")
-		return user[Ps.fd].cmd_PASS(deq, password);	
-	if ((user[Ps.fd].ShowAuth() & PASSWORD) == 0)
-		return false;
-	else if (deq.front() == "NICK")
+	// if (deq.front() == "PASS")
+	// 	return user[Ps.fd].cmd_PASS(deq, password);	
+	// if ((user[Ps.fd].ShowAuth() & PASSWORD) == 0)
+	// 	return false;
+	if (deq.front() == "NICK")
 		return user[Ps.fd].cmd_NICK(deq, user);
-	else if (deq.front() == "USER")
+	if (deq.front() == "USER")
 		return user[Ps.fd].cmd_USER(deq);
 	return 2;
 }
@@ -145,10 +145,12 @@ bool	ircserv::ircserv_receiv(pollfd& Ps)
 		return false;
 	if (ircserv_auth(Ps, deq) != 2)
 		return true;
-	if ((user[Ps.fd].ShowAuth() & AUTHENTIFICATED) == 0)
-		return false;
+	// if ((user[Ps.fd].ShowAuth() & AUTHENTIFICATED) == 0)
+	// 	return false;
 	if (deq.front() == "JOIN")
-		return user[Ps.fd].cmd_JOIN(deq, channels);		
+		return user[Ps.fd].cmd_JOIN(deq, channels);
+	else if (deq.front() == "SHOW")
+		return user[Ps.fd].cmd_SHOW(deq, channels);
 	return true;
 }
 
