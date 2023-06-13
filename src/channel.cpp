@@ -6,7 +6,7 @@
 /*   By: mzridi <mzridi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 17:11:18 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/13 23:53:47 by mzridi           ###   ########.fr       */
+/*   Updated: 2023/06/14 00:27:16 by mzridi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,5 +79,18 @@ bool Channel::kickUser(std::string &nick, client &cl)
 		return false;
 	}
 	users.erase(nick);
+	return true;
+}
+
+bool Channel::addMod(int fd)
+{
+	std::vector<int>::iterator it = mods.begin();
+
+	for (it = mods.begin(); it != mods.end(); it++)
+	{
+		if (*it == fd)
+			return false;
+	}
+	mods.push_back(fd);
 	return true;
 }

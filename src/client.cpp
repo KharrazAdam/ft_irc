@@ -6,7 +6,7 @@
 /*   By: mzridi <mzridi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:38:15 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/13 23:56:39 by mzridi           ###   ########.fr       */
+/*   Updated: 2023/06/14 00:35:35 by mzridi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,9 +199,9 @@ bool client::cmd_KICK(std::deque<std::string>& deq, std::map<std::string,Channel
 	if (channels.find(chan) == channels.end())
 		return send_error("ERR_NOSUCHCHANNEL"), false; // ERR_NOSUCHCHANNEL
 	channel = &channels[chan];
-	// std::vector<int>	&mods = channel->getMods();
-	// if (std::find(mods.begin(), mods.end(), fd) == mods.end())
-	// 	return send_error("ERR_CHANOPRIVSNEEDED"), false; // ERR_CHANOPRIVSNEEDED
+	std::vector<int>	&mods = channel->getMods();
+	if (std::find(mods.begin(), mods.end(), fd) == mods.end())
+		return send_error("ERR_CHANOPRIVSNEEDED"), false; // ERR_CHANOPRIVSNEEDED
 	for (size_t i = 0; i < nicks.size(); i++)
 		channel->kickUser(nicks[i], *this);
 	return true;
@@ -221,7 +221,10 @@ bool	client::cmd_JOIN(std::deque<std::string>& deq, std::map<std::string, Channe
 	for (size_t i = 0; i < titles.size(); i++)
 	{
 		if (channels.find(titles[i]) == channels.end())
+		{
 			channels[titles[i]] = ::Channel(titles[i], keys[i]); // channel doesn't exist
+			channels[titles[i]].addMod(fd);
+		}
 		if (!channels[titles[i]].GetKey().compare("") || !channels[titles[i]].GetKey().compare(keys[i]))
 			channels[titles[i]].add_user(*this);
 		else	

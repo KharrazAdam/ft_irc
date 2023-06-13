@@ -27,6 +27,7 @@ public:
 	std::map<std::string, int>&	getUsers(void);
 	std::vector<int>&	getMods(void);
 	bool			kickUser(std::string &nick, client &cl);
+	bool			addMod(int fd);
 private:
 	std::vector<int> 			mods;
 	std::map<std::string, int> users;
