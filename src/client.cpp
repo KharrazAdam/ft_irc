@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mzridi <mzridi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:38:15 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/13 21:12:10 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/13 23:56:39 by mzridi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,6 +183,28 @@ void	client::com_sep(std::deque<std::string>& deq, std::vector<std::string>& vec
     std::string			str;
 	while (std::getline(ss, str, ','))
         vec.push_back(str);
+}
+
+bool client::cmd_KICK(std::deque<std::string>& deq, std::map<std::string,Channel>& channels)
+{
+	std::string					chan;
+	std::vector<std::string>	nicks;
+	Channel						*channel;
+	
+	if (deq.size() < 3)
+		return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
+	chan = deq[1];
+	deq.pop_front();
+	com_sep(deq, nicks);
+	if (channels.find(chan) == channels.end())
+		return send_error("ERR_NOSUCHCHANNEL"), false; // ERR_NOSUCHCHANNEL
+	channel = &channels[chan];
+	// std::vector<int>	&mods = channel->getMods();
+	// if (std::find(mods.begin(), mods.end(), fd) == mods.end())
+	// 	return send_error("ERR_CHANOPRIVSNEEDED"), false; // ERR_CHANOPRIVSNEEDED
+	for (size_t i = 0; i < nicks.size(); i++)
+		channel->kickUser(nicks[i], *this);
+	return true;
 }
 
 bool	client::cmd_JOIN(std::deque<std::string>& deq, std::map<std::string, Channel>& channels)

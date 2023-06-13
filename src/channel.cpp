@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mzridi <mzridi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 17:11:18 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/13 21:06:31 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/13 23:53:47 by mzridi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,4 +53,31 @@ void	Channel::show_details()
 	for (it = users.begin(); it != users.end(); it++)
 		std::cout << (*it).first << " ";
 	std::cout << std::endl;
+}
+
+std::map<std::string, int> &Channel::getUsers(void)
+{
+	return users;
+}
+
+std::vector<int>& Channel::getMods(void)
+{
+	return mods;
+}
+
+bool Channel::kickUser(std::string &nick, client &cl)
+{
+	if (users.find(cl.getNick()) == users.end())
+	{
+		cl.send_error("ERR_NOTONCHANNEL");
+		return false;
+	}
+	if (users.find(nick) == users.end())
+	{
+		std::cout << "nick: " << nick << std::endl;
+		cl.send_error("ERR_USERNOTINCHANNEL");
+		return false;
+	}
+	users.erase(nick);
+	return true;
 }

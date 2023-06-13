@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mzridi <mzridi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:27:46 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/13 21:11:10 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/13 22:58:45 by mzridi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,11 @@ public:
 	// JOIN
 	bool	cmd_JOIN(std::deque<std::string>&, std::map<std::string, Channel>&);
 	void	com_sep(std::deque<std::string>& deq, std::vector<std::string>& vec);
+	// 
+	// KICK
+	bool	cmd_KICK(std::deque<std::string>&, std::map<std::string, Channel>&);	
 	// ....
+	// Debug
 	bool	cmd_SHOW(std::deque<std::string>&, std::map<std::string, Channel>&);
 	// <-----errors--------->
 	

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mzridi <mzridi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/13 17:44:10 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/13 23:45:34 by mzridi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,6 +151,8 @@ bool	ircserv::ircserv_receiv(pollfd& Ps)
 		return user[Ps.fd].cmd_JOIN(deq, channels);
 	else if (deq.front() == "SHOW")
 		return user[Ps.fd].cmd_SHOW(deq, channels);
+	else if (deq.front() == "KICK")
+		return user[Ps.fd].cmd_KICK(deq, channels);
 	return true;
 }
 

@@ -24,6 +24,9 @@ public:
 	bool			add_user(client& cl);
 	std::string&	GetKey(void);
 	void			show_details();
+	std::map<std::string, int>&	getUsers(void);
+	std::vector<int>&	getMods(void);
+	bool			kickUser(std::string &nick, client &cl);
 private:
 	std::vector<int> 			mods;
 	std::map<std::string, int> users;
