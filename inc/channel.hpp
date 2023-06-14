@@ -26,9 +26,12 @@ public:
 	void			show_details();
 	std::map<std::string, int>&	getUsers(void);
 	std::vector<int>&	getMods(void);
-	bool			kickUser(std::string &nick, client &cl);
-	bool			addMod(int fd);
-	bool			setTopic(std::string &topic, client &cl);
+	bool				kickUser(std::string &nick, client &cl);
+	bool				addMod(int fd);
+	bool				setTopic(std::string &topic, client &cl);
+	bool				isMod(int fd);
+	bool				isUser(std::string &nick);
+	bool				isActive(const char &mode);
 private:
 	std::vector<int> 			mods;
 	std::map<std::string, int> users;
@@ -39,7 +42,7 @@ private:
 	std::string	topic;
 	
 
-	size_t		l;
+	int		l;
 	bool	k;
 	bool	i;
 	bool	t;

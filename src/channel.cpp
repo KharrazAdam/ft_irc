@@ -6,7 +6,7 @@
 /*   By: mzridi <mzridi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 17:11:18 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/14 00:45:21 by mzridi           ###   ########.fr       */
+/*   Updated: 2023/06/14 23:30:58 by mzridi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ bool	Channel::add_user(client& cl)
 {
 	if (users.find(cl.getNick()) != users.end())
 		return true;
-	if (users.size() == this->l)
+	if (this->l > 0 && users.size() == (size_t)this->l)
 			return (cl.send_error("ERR_CHANNELISFULL"), false);
 	if (this->i == true) // check the invite list
 	{
@@ -108,5 +108,31 @@ bool Channel::setTopic(std::string &topic, client &cl)
 		return false;
 	}
 	this->topic = topic;
+	return true;
+}
+
+bool Channel::isMod(int fd)
+{
+	std::vector<int>::iterator it = mods.begin();
+
+	for (it = mods.begin(); it != mods.end(); it++)
+		if (*it == fd)
+			return true;
+	return false;
+}
+
+bool Channel::isUser(std::string &nick)
+{
+    return users.find(nick) != users.end();
+}
+
+bool Channel::isActive(const char &mode)
+{
+	if (mode == 'i')
+		return i;
+    if (mode == 't')
+		return t;
+	if (mode == 'l')
+		return l != -1;
 	return true;
 }
