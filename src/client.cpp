@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:38:15 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/13 21:12:10 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/15 11:43:36 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,3 +208,74 @@ bool	client::cmd_JOIN(std::deque<std::string>& deq, std::map<std::string, Channe
 	return true;
 }
 
+// bool	client::sendUser(std::string& message, std::string& receiver, std::map<int, client>& cl)
+// {
+// 	std::map<int, client>::iterator it;
+	
+// 	for (it = cl.begin(); it != cl.end(); it++)
+// 	{
+// 		if ((*it).second.getNick() == receiver)
+// 			break ;
+// 	}
+// 	if (it == cl.end())
+// 		send_error("ERR_NOSUCHNICK");
+// 	else
+// 	{
+// 		if (send((*it).second.getFd(), message.c_str(), message.size(), 0) == -1)
+// 			send_error("send syscall error!");
+// 	}
+// 	return true;	
+// }
+
+bool	client::cmd_PRIVMSG(std::deque<std::string>& deq, std::map<int, client>& cl, std::map<std::string, Channel>& ch)
+{
+	std::vector<std::string>	receivers;
+	std::string	message("");
+
+	std::map<int, client>::iterator it;
+	// std::map<std::string, Channel>::iterator it2;
+
+	if (deq.size() < 3)
+		return send_error("ERR_NOTEXTTOSEND"), false; // ERR_NOTEXTTOSEND
+	com_sep(deq, receivers);
+	deq.pop_front();
+	while (true)
+	{
+		message.append(deq.front());
+		deq.pop_front();
+		if (deq.empty() == true)
+		{	
+			message.append("\n");
+			break ;
+		}
+		message.append(" ");
+	}
+	for (size_t i = 0; i < receivers.size(); i++)
+	{
+		if (receivers[i][0] == '#')
+		{
+			if (ch.find(receivers[i]) == ch.end())
+				send_error("ERR_NOSUCHCHANNEL");
+			else
+			{
+				for (size_t i = 0; i < ch[receivers[i]].users.size(); i++)
+					if (send(ch[receivers[i]].users[i].getFd(), message.c_str(), message.size(), 0) == -1)
+						send_error("ERR_SYSCALL_SEND");
+			}
+		}
+		else  // users
+		{
+			for (it = cl.begin(); it != cl.end(); it++) 
+			{
+				if (receivers[i] == (*it).second.getNick())
+					break ;
+			}
+			if (it == cl.end())
+				send_error("ERR_NOSUCHNICK");
+			else if (send((*it).second.getFd(), message.c_str(), message.size(), 0) == -1)
+				send_error("ERR_SYSCALL_SEND");
+		}
+	}
+	(void)ch;
+	return true;
+}

@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:27:46 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/13 21:11:10 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/15 10:23:29 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ private:
 	std::string	realname;
 	std::string	addr;
 
+	std::vector<std::string> channels;
+
 	void	SetAuth(int);
 	void	SetUser(std::string);
 	void	SetNick(std::string);
@@ -57,11 +59,15 @@ public:
 	bool	cmd_PASS(std::deque<std::string>&, std::string&);
 	// NICK
 	bool	cmd_NICK(std::deque<std::string>&, std::map<int, client>& cl);
+
 	// USER
 	bool	cmd_USER(std::deque<std::string>&);
 	// JOIN
 	bool	cmd_JOIN(std::deque<std::string>&, std::map<std::string, Channel>&);
-	void	com_sep(std::deque<std::string>& deq, std::vector<std::string>& vec);
+	void	com_sep(std::deque<std::string>&, std::vector<std::string>&);
+	// NOTICE
+	bool	cmd_PRIVMSG(std::deque<std::string>&, std::map<int, client>& cl, std::map<std::string, Channel>&);
+	// bool	sendUser(std::string&, std::string&, std::map<int, client>&);
 	// ....
 	bool	cmd_SHOW(std::deque<std::string>&, std::map<std::string, Channel>&);
 	// <-----errors--------->

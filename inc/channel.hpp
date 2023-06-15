@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <algorithm>
 
 // channel modes
 // +t - only ops can change topic
@@ -21,20 +22,24 @@ public:
 	Channel();
 	Channel(std::string, std::string);
 	~Channel();
-	bool			add_user(client& cl);
+
+	std::string&	getTitle(void);
 	std::string&	GetKey(void);
+
+	bool			add_user(client& cl);
 	void			show_details();
+
+	std::vector<client> users;
+	std::vector<client> mods;
+	std::vector<client>	invited;
+	std::vector<client>::iterator	vecFind(std::vector<client>&, client&);
 private:
-	std::vector<int> 			mods;
-	std::map<std::string, int> users;
-	std::map<std::string, int> invited;
 
 	std::string	title;
 	std::string	key;
 	std::string	topic;
-	
 
-	size_t		l;
+	int		l;
 	bool	k;
 	bool	i;
 };
