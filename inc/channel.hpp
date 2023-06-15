@@ -33,7 +33,7 @@ public:
 	bool				isMod(int fd);
 	bool				isUser(std::string &nick);
 	bool				isActive(const char &mode);
-	bool				inviteUser(std::string &nick, client &cl);
+	bool				inviteUser(std::string &nick);
 private:
 	std::vector<int> 			mods;
 	std::map<std::string, int>	users;

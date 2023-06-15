@@ -6,7 +6,7 @@
 /*   By: mzridi <mzridi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 17:11:18 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/15 16:54:27 by mzridi           ###   ########.fr       */
+/*   Updated: 2023/06/15 19:49:54 by mzridi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ bool Channel::isActive(const char &mode)
 	return true;
 }
 
-bool Channel::inviteUser(std::string &nick, client &cl)
+bool Channel::inviteUser(std::string &nick)
 {
 	invited.insert(nick);
 	return true;
