@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 
 // channel modes
 // +t - only ops can change topic
@@ -32,10 +33,11 @@ public:
 	bool				isMod(int fd);
 	bool				isUser(std::string &nick);
 	bool				isActive(const char &mode);
+	bool				inviteUser(std::string &nick, client &cl);
 private:
 	std::vector<int> 			mods;
-	std::map<std::string, int> users;
-	std::map<std::string, int> invited;
+	std::map<std::string, int>	users;
+	std::set<std::string>		invited;
 
 	std::string	title;
 	std::string	key;

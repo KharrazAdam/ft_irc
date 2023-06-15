@@ -6,7 +6,7 @@
 /*   By: mzridi <mzridi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/14 00:46:36 by mzridi           ###   ########.fr       */
+/*   Updated: 2023/06/14 23:38:16 by mzridi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,6 +155,8 @@ bool	ircserv::ircserv_receiv(pollfd& Ps)
 		return user[Ps.fd].cmd_KICK(deq, channels);
 	else if (deq.front() == "TOPIC")
 		return user[Ps.fd].cmd_TOPIC(deq, channels);
+	else if (deq.front() == "INVITE")
+		return user[Ps.fd].cmd_INVITE(deq, channels);
 	return true;
 }
 

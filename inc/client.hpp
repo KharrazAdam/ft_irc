@@ -6,7 +6,7 @@
 /*   By: mzridi <mzridi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:27:46 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/14 00:47:34 by mzridi           ###   ########.fr       */
+/*   Updated: 2023/06/14 23:38:42 by mzridi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,9 @@ public:
 	// KICK
 	bool	cmd_KICK(std::deque<std::string>&, std::map<std::string, Channel>&);
 	// TOPIC
-	bool	cmd_TOPIC(std::deque<std::string>&, std::map<std::string, Channel>&);	
+	bool	cmd_TOPIC(std::deque<std::string>&, std::map<std::string, Channel>&);
+	// INVITE
+	bool	cmd_INVITE(std::deque<std::string>&, std::map<std::string, Channel>&);
 	// ....
 	// Debug
 	bool	cmd_SHOW(std::deque<std::string>&, std::map<std::string, Channel>&);
