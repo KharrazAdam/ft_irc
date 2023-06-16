@@ -6,6 +6,7 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <set>
 
 // channel modes
 // +t - only ops can change topic
@@ -34,6 +35,19 @@ public:
 	std::vector<client>	invited;
 	std::vector<client>::iterator	vecFind(std::vector<client>&, client&);
 private:
+	std::map<std::string, int>&	getUsers(void);
+	std::vector<int>&	getMods(void);
+	bool				kickUser(std::string &nick, client &cl);
+	bool				addMod(int fd);
+	bool				setTopic(std::string &topic, client &cl);
+	bool				isMod(int fd);
+	bool				isUser(std::string &nick);
+	bool				isActive(const char &mode);
+	bool				inviteUser(std::string &nick);
+private:
+	std::vector<int> 			mods;
+	std::map<std::string, int>	users;
+	std::set<std::string>		invited;
 
 	std::string	title;
 	std::string	key;
@@ -42,6 +56,7 @@ private:
 	int		l;
 	bool	k;
 	bool	i;
+	bool	t;
 };
 #include "client.hpp"
 #endif
