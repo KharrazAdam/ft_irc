@@ -29,22 +29,24 @@ public:
 
 	bool			add_user(client& cl);
 	void			show_details();
-
+	bool			addMod(client&);
+	
+	void	set_i(bool);
+	void	set_k(bool);
+	void	setKey(std::string);
+	std::vector<client>::iterator	vecFind(std::vector<client>&, client&);
 	std::vector<client> users;
 	std::vector<client> mods;
+private:
 	std::vector<client>	invited;
-	std::vector<client>::iterator	vecFind(std::vector<client>&, client&);
-private:
-	std::map<std::string, int>&	getUsers(void);
-	std::vector<int>&	getMods(void);
-	bool				kickUser(std::string &nick, client &cl);
-	bool				addMod(int fd);
-	bool				setTopic(std::string &topic, client &cl);
-	bool				isMod(int fd);
-	bool				isUser(std::string &nick);
-	bool				isActive(const char &mode);
-	bool				inviteUser(std::string &nick);
-private:
+	// std::map<std::string, int>&	getUsers(void);
+	// std::vector<int>&	getMods(void);
+	// bool				kickUser(std::string &nick, client &cl);
+	// bool				setTopic(std::string &topic, client &cl);
+	// bool				isMod(int fd);
+	// bool				isUser(std::string &nick);
+	// bool				isActive(const char &mode);
+	// bool				inviteUser(std::string &nick);
 	// std::vector<int> 			mods;
 	// std::map<std::string, int>	users;
 	// std::set<std::string>		invited;

@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:27:46 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/16 01:09:25 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/16 16:25:38 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,22 +53,32 @@ public:
 	~client();
 	int				ShowAuth(void);
 	std::string		getNick(void);
+
 	int				getFd(void);
+	std::map<int, client>::iterator	mapFind(std::map<int, client>&, std::string&);
 	// <-----commands------->
-	// PASS
 	bool	cmd_PASS(std::deque<std::string>&, std::string&);
-	// NICK
+
 	bool	cmd_NICK(std::deque<std::string>&, std::map<int, client>& cl);
 
-	// USER
 	bool	cmd_USER(std::deque<std::string>&);
-	// JOIN
+
 	bool	cmd_JOIN(std::deque<std::string>&, std::map<std::string, Channel>&);
 	void	com_sep(std::deque<std::string>&, std::vector<std::string>&);
-	// NOTICE
+
+	bool	cmd_NOTICE(std::deque<std::string>&, std::map<int, client>& cl, std::map<std::string, Channel>&);
+	bool	noticeCl(std::map<int, client>&, std::string&, std::string&);
+	bool	noticeCh(std::map<std::string, Channel>&, std::string&, std::string&);
+
 	bool	cmd_PRIVMSG(std::deque<std::string>&, std::map<int, client>& cl, std::map<std::string, Channel>&);
-	// bool	sendUser(std::string&, std::string&, std::map<int, client>&);
-	// 
+	bool	msgCl(std::map<int, client>&, std::string&, std::string&);
+	bool	msgCh(std::map<std::string, Channel>&, std::string&, std::string&);
+
+	bool	cmd_MODE(std::deque<std::string>&, std::map<int, client>& cl, std::map<std::string, Channel>&);
+	void	flag_i(Channel&, bool);
+	void	flag_k(Channel&, bool, std::deque<std::string>&);
+	void	flag_o(Channel&, bool, client&);
+
 	// KICK
 	bool	cmd_KICK(std::deque<std::string>&, std::map<std::string, Channel>&);
 	// TOPIC
