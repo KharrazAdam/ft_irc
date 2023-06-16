@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:27:46 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/16 01:07:12 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/16 01:09:25 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ public:
 	// NOTICE
 	bool	cmd_PRIVMSG(std::deque<std::string>&, std::map<int, client>& cl, std::map<std::string, Channel>&);
 	// bool	sendUser(std::string&, std::string&, std::map<int, client>&);
-	void	com_sep(std::deque<std::string>& deq, std::vector<std::string>& vec);
 	// 
 	// KICK
 	bool	cmd_KICK(std::deque<std::string>&, std::map<std::string, Channel>&);

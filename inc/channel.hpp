@@ -45,9 +45,9 @@ private:
 	bool				isActive(const char &mode);
 	bool				inviteUser(std::string &nick);
 private:
-	std::vector<int> 			mods;
-	std::map<std::string, int>	users;
-	std::set<std::string>		invited;
+	// std::vector<int> 			mods;
+	// std::map<std::string, int>	users;
+	// std::set<std::string>		invited;
 
 	std::string	title;
 	std::string	key;
