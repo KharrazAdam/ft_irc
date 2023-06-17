@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 08:02:42 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/16 17:07:11 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/17 21:25:43 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,13 @@ void	client::flag_i(Channel& ch, bool sign)
 	if (ch.vecFind(ch.mods, *this) == ch.mods.end())
 		return send_error("ERR_CHANOPRIVSNEEDED"), (void)0;
 	ch.set_i(sign);
+}
+
+void	client::flag_t(Channel& ch, bool sign)
+{
+	if (ch.vecFind(ch.mods, *this) == ch.mods.end())
+		return send_error("ERR_CHANOPRIVSNEEDED"), (void)0;
+	ch.set_t(sign);
 }
 
 void	client::flag_k(Channel& ch, bool sign, std::deque<std::string>& deq)
@@ -62,7 +69,7 @@ void	client::flag_o(Channel& ch, bool sign, client& cl)
 		return send_error("ERR_USERNOTINCHANNEL"), (void)0;
 	if (sign && (it == ch.mods.end()))
 		ch.mods.push_back(cl);
-	else if (!sign && (it != ch.mods.end()))
+	else if (!sign && (it != ch.mods.end()) && ch.mods.size() > 1)
 		ch.mods.erase(it);
 }
 
@@ -96,8 +103,8 @@ bool	client::cmd_MODE(std::deque<std::string>& deq, std::map<int, client>& cl, s
 	{
 		if (modes[i].second == 'i')
 			flag_i(chan, modes[i].first);
-		// if (modes[i].second == 't')
-		// 	flag_t();
+		if (modes[i].second == 't')
+			flag_t(chan, modes[i].first);
 		if (modes[i].second == 'k')
 			flag_k(chan, modes[i].first, deq);
 		if (modes[i].second == 'o')

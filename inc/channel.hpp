@@ -32,6 +32,7 @@ public:
 	bool			addMod(client&);
 	
 	void	set_i(bool);
+	void	set_t(bool);
 	void	set_k(bool);
 	void	setKey(std::string);
 	std::vector<client>::iterator	vecFind(std::vector<client>&, client&);

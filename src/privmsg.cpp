@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 05:54:56 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/16 06:10:11 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/17 19:34:00 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ bool	client::cmd_PRIVMSG(std::deque<std::string>& deq, std::map<int, client>& cl
 
 
 	if (deq.size() < 3)
-		return send_error("ERR_NOTEXTTOSEND"), false; // ERR_NOTEXTTOSEND
+		return send_error(":irc.example.com 433 * ben :Nickname is already in use"), false; // ERR_NOTEXTTOSEND
 	com_sep(deq, receivers);
 	deq.pop_front();
 	while (true)

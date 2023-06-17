@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 17:11:18 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/16 17:02:25 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/17 21:26:04 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,11 @@ void	Channel::set_i(bool x)
 	this->i = x;
 }
 
+void	Channel::set_t(bool x)
+{
+	this->t = x;
+}
+
 void	Channel::set_k(bool x)
 {
 	this->k = x;
@@ -46,7 +51,6 @@ void	Channel::setKey(std::string str)
 {
 	key = str;
 }
-
 
 std::vector<client>::iterator	Channel::vecFind(std::vector<client>& vec, client& cl)
 {

@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:38:15 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/16 15:28:15 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/17 19:23:23 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,6 @@ bool	client::cmd_PASS(std::deque<std::string>& deq, std::string& pass)
 bool	client::cmd_NICK(std::deque<std::string>& deq, std::map<int, client>& cl)
 {
 	std::map<int, client>::iterator it = cl.begin();
-	std::string	old(nickname);
 
 	if (deq.size() == 1)
 		return send_error("ERR_NONICKNAMEGIVEN"), false; // ERR_NONICKNAMEGIVEN
@@ -176,7 +175,7 @@ void	client::send_error(const char* er) const
 	std::string str;
 
 	str.clear();
-	str.append("Error ") += nickname + ": " + er;
+	str += er;
 	if (send(fd, str.append("\n").c_str(), str.size() + 1, 0) == -1)
 		send_error(er);
 }

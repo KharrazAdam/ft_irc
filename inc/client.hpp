@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:27:46 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/16 16:25:38 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/17 19:08:16 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ public:
 
 	bool	cmd_MODE(std::deque<std::string>&, std::map<int, client>& cl, std::map<std::string, Channel>&);
 	void	flag_i(Channel&, bool);
+	void	flag_t(Channel&, bool);
 	void	flag_k(Channel&, bool, std::deque<std::string>&);
 	void	flag_o(Channel&, bool, client&);
 
