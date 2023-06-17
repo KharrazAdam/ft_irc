@@ -1,8 +1,8 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
-#include <iostream>
 #include <string>
+#include <iostream>
 #include <vector>
 #include <map>
 #include <algorithm>
@@ -35,18 +35,20 @@ public:
 	void	set_k(bool);
 	void	setKey(std::string);
 	std::vector<client>::iterator	vecFind(std::vector<client>&, client&);
+	std::vector<client>::iterator	vecFind(std::vector<client>&, std::string&);
+	bool							kickUser(std::string &nick, client &cl);
+	bool							isActive(const char &mode);
+	bool							setTopic(std::string &topic, client &cl);
+	bool							isMod(client &cl);
+	bool							isUser(client &cl);
+	bool							isInvited(client &cl);
+	bool							inviteUser(client &cl);
 	std::vector<client> users;
 	std::vector<client> mods;
 private:
 	std::vector<client>	invited;
 	// std::map<std::string, int>&	getUsers(void);
 	// std::vector<int>&	getMods(void);
-	// bool				kickUser(std::string &nick, client &cl);
-	// bool				setTopic(std::string &topic, client &cl);
-	// bool				isMod(int fd);
-	// bool				isUser(std::string &nick);
-	// bool				isActive(const char &mode);
-	// bool				inviteUser(std::string &nick);
 	// std::vector<int> 			mods;
 	// std::map<std::string, int>	users;
 	// std::set<std::string>		invited;

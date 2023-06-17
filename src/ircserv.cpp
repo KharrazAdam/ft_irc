@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mzridi <mzridi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/16 11:12:59 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/16 23:14:35 by mzridi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,14 @@ bool	ircserv::ircserv_receiv(pollfd& Ps)
 		return user[Ps.fd].cmd_NOTICE(deq, user, channels);
 	else if (deq.front() == "MODE")
 		return user[Ps.fd].cmd_MODE(deq, user, channels);
+	else if (deq.front() == "KICK")
+		return user[Ps.fd].cmd_KICK(deq, channels);
+	else if (deq.front() == "INVITE")
+		return user[Ps.fd].cmd_INVITE(deq, channels);
+	else if (deq.front() == "TOPIC")
+		return user[Ps.fd].cmd_TOPIC(deq, channels);
 	return true;
+	// mixt poulet with bigy andalouse xl
 }
 
 bool	ircserv::ircserv_connect(pollfd& Ps, int sock, int *num)

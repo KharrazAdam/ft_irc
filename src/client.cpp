@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mzridi <mzridi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:38:15 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/16 15:28:15 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/17 16:35:29 by mzridi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,30 +199,30 @@ void	client::com_sep(std::deque<std::string>& deq, std::vector<std::string>& vec
 
 bool client::cmd_KICK(std::deque<std::string>& deq, std::map<std::string,Channel>& channels)
 {
-	// std::string					chan;
-	// std::vector<std::string>	nicks;
-	// Channel						*channel;
-	(void)channels;
+	std::string					chan;
+	std::vector<std::string>	nicks;
+	Channel						*channel;
+
 	if (deq.size() < 3)
 		return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
-	// chan = deq[1];
-	// deq.pop_front();
-	// com_sep(deq, nicks);
-	// if (channels.find(chan) == channels.end())
-	// 	return send_error("ERR_NOSUCHCHANNEL"), false; // ERR_NOSUCHCHANNEL
-	// channel = &channels[chan];
+	chan = deq[1];
+	deq.pop_front();
+	com_sep(deq, nicks);
+	if (channels.find(chan) == channels.end())
+		return send_error("ERR_NOSUCHCHANNEL"), false; // ERR_NOSUCHCHANNEL
+	channel = &channels[chan];
 	// std::vector<int>	&mods = channel->getMods();
-	// if (std::find(mods.begin(), mods.end(), fd) == mods.end())
-	// 	return send_error("ERR_CHANOPRIVSNEEDED"), false; // ERR_CHANOPRIVSNEEDED
-	// for (size_t i = 0; i < nicks.size(); i++)
-	// {
-	// 	// TODO: send kick message with comment message
-	// 	if (channel->kickUser(nicks[i], *this))
-	// 		continue;
+	if (channel->vecFind(channel->mods, *this) == channel->mods.end())
+		return send_error("ERR_CHANOPRIVSNEEDED"), false; // ERR_CHANOPRIVSNEEDED
+	for (size_t i = 0; i < nicks.size(); i++)
+	{
+		// TODO: send kick message with comment message
+		if (channel->kickUser(nicks[i], *this))
+			continue;
 
-	// }
-	// if (channel->getUsers().empty())
-	// 	channels.erase(chan);
+	}
+	if (channel->users.empty())
+		channels.erase(chan);
 	return true;
 }
 
@@ -248,23 +248,22 @@ bool client::cmd_TOPIC(std::deque<std::string> & deq, std::map<std::string, Chan
 
 bool client::cmd_INVITE(std::deque<std::string> & deq, std::map<std::string, Channel> & channels)
 {
-	// std::string	chan;
-	// std::string	nick;
-	(void)channels;
+	std::string	chan;
+	std::string	nick;
 	if (deq.size() < 3)
 		return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
-	// chan = deq[1];
-	// deq.pop_front();
-	// nick = deq.front();
-	// if (channels.find(chan) == channels.end())
-	// 	return send_error("ERR_NOSUCHCHANNEL"), false; // ERR_NOSUCHCHANNEL
-	// if (channels[chan].getUsers().find(nickname) == channels[chan].getUsers().end())
-	// 	return send_error("ERR_NOTONCHANNEL"), false; // ERR_NOTONCHANNEL
-	// if (channels[chan].isActive('i') && !channels[chan].isMod(fd))
-	// 	return send_error("ERR_CHANOPRIVSNEEDED"), false; // ERR_CHANOPRIVSNEEDED
-	// if (channels[chan].getUsers().find(nick) != channels[chan].getUsers().end())
-	// 	return send_error("ERR_USERONCHANNEL"), false; // ERR_USERONCHANNEL
-	// channels[chan].inviteUser(nick);
+	chan = deq[1];
+	deq.pop_front();
+	nick = deq.front();
+	if (channels.find(chan) == channels.end())
+		return send_error("ERR_NOSUCHCHANNEL"), false; // ERR_NOSUCHCHANNEL
+	if (channels[chan].vecFind(channels[chan].users, *this) == channels[chan].users.end())
+		return send_error("ERR_NOTONCHANNEL"), false; // ERR_NOTONCHANNEL
+	if (channels[chan].isActive('i') && !channels[chan].isMod(*this))
+		return send_error("ERR_CHANOPRIVSNEEDED"), false; // ERR_CHANOPRIVSNEEDED
+	if (channels[chan].vecFind(channels[chan].users, nick) != channels[chan].users.end())
+		return send_error("ERR_USERONCHANNEL"), false; // ERR_USERONCHANNEL
+	channels[chan].inviteUser(*channels[chan].vecFind(channels[chan].users, nick));
 	return true;
 }
 

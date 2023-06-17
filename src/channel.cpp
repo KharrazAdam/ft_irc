@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mzridi <mzridi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 17:11:18 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/16 17:02:25 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/17 15:15:17 by mzridi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,20 @@ std::vector<client>::iterator	Channel::vecFind(std::vector<client>& vec, client&
 	return it;
 }
 
+std::vector<client>::iterator	Channel::vecFind(std::vector<client>& vec, std::string &nick)
+{
+	std::vector<client>::iterator it;
+
+    for (it = vec.begin(); it != vec.end(); it++)
+	{
+		if ((*it).getNick() == nick)
+			break ;
+	}
+	if (it != vec.end())
+		std::cout << (*it).getNick() << std::endl;
+	return it;
+}
+
 bool	Channel::add_user(client &cl)
 {   
 	std::vector<client>::iterator	it;
@@ -77,5 +91,73 @@ bool	Channel::add_user(client &cl)
 		invited.erase(it);
 	}
 	users.push_back(cl);
+	return true;
+}
+
+
+bool Channel::kickUser(std::string &nick, client &cl)
+{
+	if (vecFind(users, cl) == users.end())
+	{
+		cl.send_error("ERR_NOTONCHANNEL");
+		return false;
+	}
+	if (vecFind(users, nick) == users.end())
+	{
+		std::cout << "nick: " << nick << std::endl;
+		cl.send_error("ERR_USERNOTINCHANNEL");
+		return false;
+	}
+	users.erase(vecFind(users, nick));
+	return true;
+}
+
+bool Channel::setTopic(std::string &topic, client &cl)
+{
+	if (vecFind(users, cl) == users.end())
+	{
+		cl.send_error("ERR_NOTONCHANNEL");
+		return false;
+	}
+    if(t && vecFind(mods, cl) == mods.end())
+	{
+		cl.send_error("ERR_CHANOPRIVSNEEDED");
+		return false;
+	}
+	this->topic = topic;
+	return true;
+}
+
+bool Channel::isMod(client &cl)
+{
+	return vecFind(mods, cl) != mods.end();
+}
+
+bool Channel::isUser(client &cl)
+{
+	return vecFind(users, cl) != users.end();
+}
+
+bool Channel::isInvited(client &cl)
+{
+	return vecFind(invited, cl) != invited.end();
+}
+
+bool Channel::isActive(const char &mode)
+{
+	if (mode == 'i')
+		return i;
+    if (mode == 't')
+		return t;
+	if (mode == 'l')
+		return l != -1;
+	return true;
+}
+
+bool Channel::inviteUser(client &cl)
+{
+	if (isInvited(cl))
+		return true;
+	invited.push_back(cl);
 	return true;
 }
