@@ -6,7 +6,7 @@
 /*   By: mzridi <mzridi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/16 23:14:35 by mzridi           ###   ########.fr       */
+/*   Updated: 2023/06/17 17:02:48 by mzridi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,9 @@ bool	ircserv::ircserv_bind(sockaddr_in6 *addr, int sock)
 	addr->sin6_family = AF_INET6;
 	addr->sin6_port = htons(port); // host to network short: if it's small endian converts it to big endian	
 	addr->sin6_len = sizeof(sockaddr_in6);
+	int opt = 1;
+	if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
+		return std::cerr << "Error: setsockopt()" << std::endl, false;
 	if (bind(sock, (sockaddr *)addr, sizeof(sockaddr_in6)) == -1)
 		return std::cerr << "Error: bind()" << std::endl, false;
 	return (true);
