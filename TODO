@@ -1,0 +1,4 @@
+- channel name should be preceded with '#'
+- delete the channel when there is no user left on it
+
+- before any command on channels ERR_NOTONCHANNEL

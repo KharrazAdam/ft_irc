@@ -1,10 +1,12 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
-#include <iostream>
 #include <string>
+#include <iostream>
 #include <vector>
 #include <map>
+#include <algorithm>
+#include <set>
 
 // channel modes
 // +t - only ops can change topic
@@ -21,26 +23,44 @@ public:
 	Channel();
 	Channel(std::string, std::string);
 	~Channel();
-	bool			add_user(client& cl);
+
+	std::string&	getTitle(void);
 	std::string&	GetKey(void);
+
+	bool			add_user(client& cl);
 	void			show_details();
-	std::map<std::string, int>&	getUsers(void);
-	std::vector<int>&	getMods(void);
-	bool			kickUser(std::string &nick, client &cl);
-	bool			addMod(int fd);
+	bool			addMod(client&);
+	
+	void	set_i(bool);
+	void	set_k(bool);
+	void	setKey(std::string);
+	std::vector<client>::iterator	vecFind(std::vector<client>&, client&);
+	std::vector<client>::iterator	vecFind(std::vector<client>&, std::string&);
+	bool							kickUser(std::string &nick, client &cl);
+	bool							isActive(const char &mode);
+	bool							setTopic(std::string &topic, client &cl);
+	bool							isMod(client &cl);
+	bool							isUser(client &cl);
+	bool							isInvited(client &cl);
+	bool							inviteUser(client &cl);
+	std::vector<client> users;
+	std::vector<client> mods;
 private:
-	std::vector<int> 			mods;
-	std::map<std::string, int> users;
-	std::map<std::string, int> invited;
+	std::vector<client>	invited;
+	// std::map<std::string, int>&	getUsers(void);
+	// std::vector<int>&	getMods(void);
+	// std::vector<int> 			mods;
+	// std::map<std::string, int>	users;
+	// std::set<std::string>		invited;
 
 	std::string	title;
 	std::string	key;
 	std::string	topic;
-	
 
-	size_t		l;
+	int		l;
 	bool	k;
 	bool	i;
+	bool	t;
 };
 #include "client.hpp"
 #endif

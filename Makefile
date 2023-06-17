@@ -6,13 +6,13 @@
 #    By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/22 16:06:48 by akharraz          #+#    #+#              #
-#    Updated: 2023/06/11 17:54:32 by akharraz         ###   ########.fr        #
+#    Updated: 2023/06/16 09:48:11 by akharraz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ./bin/ircserv
 CC = c++
-SRC = $(addsuffix .cpp, ircserv client channel join main)
+SRC = $(addsuffix .cpp, ircserv client channel join main privmsg notice show mode)
 
 CFLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address
  
