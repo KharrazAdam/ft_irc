@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   show.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mzridi <mzridi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 06:12:24 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/16 07:59:04 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/17 16:51:05 by mzridi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void	Channel::show_details()
 	std::vector<client>::iterator it = users.begin();
 
 	std::cout << "title: " << title << std::endl;
+	std::cout << "topic: " << topic << std::endl;
 	std::cout << "key: " << key << std::endl; 
 	std::cout << "users: "; 
 	for (it = users.begin(); it != users.end(); it++)

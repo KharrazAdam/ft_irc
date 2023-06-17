@@ -2,3 +2,4 @@ obm
 a.out
 obj
 IBM_server.c
+bin/ircserv

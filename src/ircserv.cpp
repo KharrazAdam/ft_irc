@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mzridi <mzridi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/16 11:12:59 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/17 17:02:48 by mzridi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,9 @@ bool	ircserv::ircserv_bind(sockaddr_in6 *addr, int sock)
 	addr->sin6_family = AF_INET6;
 	addr->sin6_port = htons(port); // host to network short: if it's small endian converts it to big endian	
 	addr->sin6_len = sizeof(sockaddr_in6);
+	int opt = 1;
+	if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
+		return std::cerr << "Error: setsockopt()" << std::endl, false;
 	if (bind(sock, (sockaddr *)addr, sizeof(sockaddr_in6)) == -1)
 		return std::cerr << "Error: bind()" << std::endl, false;
 	return (true);
@@ -157,7 +160,14 @@ bool	ircserv::ircserv_receiv(pollfd& Ps)
 		return user[Ps.fd].cmd_NOTICE(deq, user, channels);
 	else if (deq.front() == "MODE")
 		return user[Ps.fd].cmd_MODE(deq, user, channels);
+	else if (deq.front() == "KICK")
+		return user[Ps.fd].cmd_KICK(deq, channels);
+	else if (deq.front() == "INVITE")
+		return user[Ps.fd].cmd_INVITE(deq, channels);
+	else if (deq.front() == "TOPIC")
+		return user[Ps.fd].cmd_TOPIC(deq, channels);
 	return true;
+	// mixt poulet with bigy andalouse xl
 }
 
 bool	ircserv::ircserv_connect(pollfd& Ps, int sock, int *num)
