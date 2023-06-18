@@ -37,8 +37,8 @@ public:
 	void	set_t(bool);
 	void	set_k(bool);
 	void	setKey(std::string);
-	std::vector<client>::iterator	vecFind(std::vector<client>&, client&);
-	std::vector<client>::iterator	vecFind(std::vector<client>&, std::string&);
+	std::vector<client *>::iterator	vecFind(std::vector<client *>&, client&);
+	std::vector<client *>::iterator	vecFind(std::vector<client *>&, std::string&);
 	bool							kickUser(std::string &nick, client &cl);
 	bool							isActive(const char &mode);
 	bool							setTopic(std::string &topic, client &cl);
@@ -46,10 +46,10 @@ public:
 	bool							isUser(client &cl);
 	bool							isInvited(client &cl);
 	bool							inviteUser(client &cl);
-	std::vector<client> users;
-	std::vector<client> mods;
+	std::vector<client *> users;
+	std::vector<client *> mods;
 private:
-	std::vector<client>	invited;
+	std::vector<client *>	invited;
 	// std::map<std::string, int>&	getUsers(void);
 	// std::vector<int>&	getMods(void);
 	// std::vector<int> 			mods;

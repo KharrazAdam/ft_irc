@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 17:11:18 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/18 00:00:14 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/18 02:55:40 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,25 +52,25 @@ void	Channel::setKey(std::string str)
 	key = str;
 }
 
-std::vector<client>::iterator	Channel::vecFind(std::vector<client>& vec, client& cl)
+std::vector<client *>::iterator	Channel::vecFind(std::vector<client *>& vec, client& cl)
 {
-	std::vector<client>::iterator it;
+	std::vector<client *>::iterator it;
 
     for (it = vec.begin(); it != vec.end(); it++)
 	{
-		if ((*it).getNick() == cl.getNick())
+		if ((*it)->getNick() == cl.getNick())
 			break ;
 	}
 	return it;
 }
 
-std::vector<client>::iterator	Channel::vecFind(std::vector<client>& vec, std::string &nick)
+std::vector<client *>::iterator	Channel::vecFind(std::vector<client *>& vec, std::string &nick)
 {
-	std::vector<client>::iterator it;
+	std::vector<client *>::iterator it;
 
     for (it = vec.begin(); it != vec.end(); it++)
 	{
-		if ((*it).getNick() == nick)
+		if ((*it)->getNick() == nick)
 			break ;
 	}
 	return it;
@@ -78,7 +78,7 @@ std::vector<client>::iterator	Channel::vecFind(std::vector<client>& vec, std::st
 
 bool	Channel::add_user(client &cl)
 {   
-	std::vector<client>::iterator	it;
+	std::vector<client *>::iterator	it;
 
 	if (vecFind(users, cl) != users.end())
 		return true;
@@ -90,7 +90,7 @@ bool	Channel::add_user(client &cl)
 			return (cl.send_error("ERR_INVITEONLYCHAN"), false);
 		invited.erase(it);
 	}
-	users.push_back(cl);
+	users.push_back(&cl);
 	return true;
 }
 
@@ -157,6 +157,6 @@ bool Channel::inviteUser(client &cl)
 {
 	if (isInvited(cl))
 		return true;
-	invited.push_back(cl);
+	invited.push_back(&cl);
 	return true;
 }

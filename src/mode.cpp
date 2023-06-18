@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 08:02:42 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/17 23:34:11 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/18 02:57:38 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	client::flag_k(Channel& ch, bool sign, std::deque<std::string>& deq)
 
 void	client::flag_o(Channel& ch, bool sign, client& cl)
 {
-	std::__1::vector<client>::iterator it = ch.vecFind(ch.mods, cl);
+	std::__1::vector<client *>::iterator it = ch.vecFind(ch.mods, cl);
 
 	if (ch.vecFind(ch.users, *this) == ch.users.end())
 		return send_error("ERR_USERNOTINCHANNEL"), (void)0;
@@ -68,7 +68,7 @@ void	client::flag_o(Channel& ch, bool sign, client& cl)
 	if (ch.vecFind(ch.users, cl) == ch.users.end())
 		return send_error("ERR_USERNOTINCHANNEL"), (void)0;
 	if (sign && (it == ch.mods.end()))
-		ch.mods.push_back(cl);
+		ch.mods.push_back(&cl);
 	else if (!sign && (it != ch.mods.end()) && ch.mods.size() > 1)
 		ch.mods.erase(it);
 }

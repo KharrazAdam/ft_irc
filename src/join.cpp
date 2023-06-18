@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 17:53:42 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/16 07:54:50 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/18 04:32:58 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 bool	Channel::addMod(client& cl)
 {
-	mods.push_back(cl);
+	mods.push_back(&cl);
 	return true;
 }
 

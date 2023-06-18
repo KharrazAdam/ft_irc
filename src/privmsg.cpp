@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 05:54:56 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/17 19:34:00 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/18 04:33:06 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ bool	client::msgCh(std::map<std::string, Channel>& ch, std::string& message, std
 			return send_error("ERR_CANNOTSENDTOCHAN"), false;
 		for (size_t j = 0; j < ch[receiver].users.size(); j++)
 		{
-			if (send(ch[receiver].users[j].getFd(), message.c_str(), message.size(), 0) == -1)
+			if (send(ch[receiver].users[j]->getFd(), message.c_str(), message.size(), 0) == -1)
 				send_error("ERR_SYSCALL_SEND");
 		}
 	}
