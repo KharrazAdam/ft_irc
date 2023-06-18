@@ -6,7 +6,7 @@
 /*   By: ael-hamd <ael-hamd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/18 23:26:56 by ael-hamd         ###   ########.fr       */
+/*   Updated: 2023/06/19 00:30:23 by ael-hamd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,8 +176,10 @@ char	ircserv::ircserv_auth(pollfd& Ps, std::string& str)
 			user[Ps.fd].cmd_USER(deq);
 		i++;
 	}
-	if (i == 0)
+	if (i == 0){
+		cout << "im here !!! " << endl;
 		return 2;
+	}
 	return 1;
 }
 
@@ -190,12 +192,16 @@ bool	ircserv::ircserv_receiv(pollfd& Ps, int *num)
 		return false;
 	if (ircserv_cmd(deq, str) == false)
 		return false;
-	if (ircserv_auth(Ps, str) != 2)
-		return true;
+	ircserv_auth(Ps, str);
 	if ((user[Ps.fd].ShowAuth() & AUTHENTIFICATED) == 0)
 		return false;
+	cout << "user authentificated == "<< deq.front() << endl;
+	deq[0] = makeUppercase(deq.front());
 	if (deq.front() == "JOIN")
+	{
+		cout << "im here >>> in join " << endl;
 		return user[Ps.fd].cmd_JOIN(deq, channels);
+	}
 	else if (deq.front() == "SHOW")
 		return user[Ps.fd].cmd_SHOW(deq, channels);
 	else if (deq.front() == "PRIVMSG")
