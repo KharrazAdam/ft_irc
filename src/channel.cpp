@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 17:11:18 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/17 23:25:28 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/18 00:00:14 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,6 @@ std::vector<client>::iterator	Channel::vecFind(std::vector<client>& vec, client&
 		if ((*it).getNick() == cl.getNick())
 			break ;
 	}
-	if (it != vec.end())
-		std::cout << (*it).getNick() << std::endl;
 	return it;
 }
 
@@ -75,8 +73,6 @@ std::vector<client>::iterator	Channel::vecFind(std::vector<client>& vec, std::st
 		if ((*it).getNick() == nick)
 			break ;
 	}
-	if (it != vec.end())
-		std::cout << (*it).getNick() << std::endl;
 	return it;
 }
 
@@ -108,7 +104,6 @@ bool Channel::kickUser(std::string &nick, client &cl)
 	}
 	if (vecFind(users, nick) == users.end())
 	{
-		std::cout << "nick: " << nick << std::endl;
 		cl.send_error("ERR_USERNOTINCHANNEL");
 		return false;
 	}

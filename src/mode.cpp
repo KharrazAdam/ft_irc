@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 08:02:42 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/17 21:25:43 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/17 23:34:11 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,11 +103,11 @@ bool	client::cmd_MODE(std::deque<std::string>& deq, std::map<int, client>& cl, s
 	{
 		if (modes[i].second == 'i')
 			flag_i(chan, modes[i].first);
-		if (modes[i].second == 't')
+		else if (modes[i].second == 't')
 			flag_t(chan, modes[i].first);
-		if (modes[i].second == 'k')
+		else if (modes[i].second == 'k')
 			flag_k(chan, modes[i].first, deq);
-		if (modes[i].second == 'o')
+		else if (modes[i].second == 'o')
 		{
 			if (deq.empty())
 				send_error("ERR_NEEDMOREPARAMS");

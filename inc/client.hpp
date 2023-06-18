@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:27:46 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/17 19:08:16 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/18 00:05:08 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@
 # define NICKNAME 4 // 0b100
 # define AUTHENTIFICATED 8
 # define REGISTRED 16
+
+using namespace std;
 
 class Channel;
 class client
@@ -85,7 +87,7 @@ public:
 	// TOPIC
 	bool	cmd_TOPIC(std::deque<std::string>&, std::map<std::string, Channel>&);
 	// INVITE
-	bool	cmd_INVITE(std::deque<std::string>&, std::map<std::string, Channel>&);
+	bool	cmd_INVITE(std::deque<std::string>&, std::map<int, client>&, std::map<std::string, Channel>&);
 	// ....
 	// Debug
 	bool	cmd_SHOW(std::deque<std::string>&, std::map<std::string, Channel>&);

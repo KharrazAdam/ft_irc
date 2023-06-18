@@ -6,7 +6,7 @@
 /*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:38:15 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/17 23:25:07 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/18 00:24:23 by akharraz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,13 @@ bool	is_alpha_valid(std::string& str)
 	return true;
 }
 
-std::map<int, client>::iterator	client::mapFind(std::map<int, client>&map, std::string& cl)
+std::map<int, client>::iterator	client::mapFind(std::map<int, client>&map, std::string& nick)
 {
 	std::map<int, client>::iterator it;
 
     for (it = map.begin(); it != map.end(); it++)
 	{
-		if ((*it).second.getNick() == cl)
+		if ((*it).second.getNick() == nick)
 			break ;
 	}
 	return it;
@@ -244,15 +244,16 @@ bool client::cmd_TOPIC(std::deque<std::string> & deq, std::map<std::string, Chan
 	return true;
 }
 
-bool client::cmd_INVITE(std::deque<std::string> & deq, std::map<std::string, Channel> & channels)
+bool client::cmd_INVITE(std::deque<std::string> & deq, std::map<int, client>& users, std::map<std::string, Channel> & channels)
 {
 	std::string	chan;
 	std::string	nick;
 	if (deq.size() < 3)
 		return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
 	chan = deq[1];
-	deq.pop_front();
-	nick = deq.front();
+	nick = deq[2];
+	cout << "salma : " << nick << endl;
+	cout << "chan : " << chan << endl;
 	if (channels.find(chan) == channels.end())
 		return send_error("ERR_NOSUCHCHANNEL"), false; // ERR_NOSUCHCHANNEL
 	if (channels[chan].vecFind(channels[chan].users, *this) == channels[chan].users.end())
@@ -261,7 +262,11 @@ bool client::cmd_INVITE(std::deque<std::string> & deq, std::map<std::string, Cha
 		return send_error("ERR_CHANOPRIVSNEEDED"), false; // ERR_CHANOPRIVSNEEDED
 	if (channels[chan].vecFind(channels[chan].users, nick) != channels[chan].users.end())
 		return send_error("ERR_USERONCHANNEL"), false; // ERR_USERONCHANNEL
-	channels[chan].inviteUser(*channels[chan].vecFind(channels[chan].users, nick));
+	// if (channels[chan].vecFind(channels[chan].users, nick) != channels[chan].users.end())
+	if (mapFind(users, nick) != users.end())
+		channels[chan].inviteUser((*mapFind(users, nick)).second);
+	else
+		return send_error("ERR_NOSUCHNICK"), false; // ERR_NOSUCHNICK	
 	return true;
 }
 

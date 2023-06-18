@@ -15,6 +15,8 @@
 // +k - password
 // +o - op
 
+using namespace std;
+
 class client;
 
 class Channel

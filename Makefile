@@ -6,7 +6,7 @@
 #    By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/22 16:06:48 by akharraz          #+#    #+#              #
-#    Updated: 2023/06/16 09:48:11 by akharraz         ###   ########.fr        #
+#    Updated: 2023/06/17 23:41:43 by akharraz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = ./bin/ircserv
 CC = c++
 SRC = $(addsuffix .cpp, ircserv client channel join main privmsg notice show mode)
 
-CFLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address -g
  
 INC = $(addprefix ./inc/, ircserv.hpp channel.hpp client.hpp)
 
