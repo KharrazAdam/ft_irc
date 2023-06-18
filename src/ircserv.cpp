@@ -6,7 +6,7 @@
 /*   By: ael-hamd <ael-hamd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/18 23:20:12 by ael-hamd         ###   ########.fr       */
+/*   Updated: 2023/06/18 23:26:56 by ael-hamd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,11 @@
 ircserv::ircserv(){};
 ircserv::~ircserv(){};
 
-std::string makeUppercase(const std::string& str)
+string makeUppercase(const string& str)
 {
-	std::string result = str;
-	for (std::string::iterator it = result.begin(); it != result.end(); ++it)
-	    *it = std::toupper(*it);
+	string result = str;
+	for (string::iterator it = result.begin(); it != result.end(); ++it)
+	    *it = toupper(*it);
 	return result;
 }
 
@@ -28,7 +28,7 @@ std::string makeUppercase(const std::string& str)
  * @brief checks if all the str's elemnts are digits
  * @return true if str is number otherwise false 
 */
-bool	ircserv::is_num(std::string str)
+bool	ircserv::is_num(string str)
 {
 	size_t size = str.size();
 	for (size_t i = 0; i < size; i++)
@@ -46,18 +46,18 @@ bool	ircserv::is_num(std::string str)
 */
 bool	ircserv::ircserv_port(const char *av, const char* pass)
 {
-	std::stringstream ss(av);
+	stringstream ss(av);
 
-	if (!pass[0] || std::string(pass).find_first_of(" \t\n\r") != std::string::npos)
-		return (std::cerr << "Error: invalid password" << std::endl, false);
+	if (!pass[0] || string(pass).find_first_of(" \t\n\r") != string::npos)
+		return (cerr << "Error: invalid password" << endl, false);
 	
 	if (ss.str().size() > 5 || is_num(ss.str()) == false)
-		return (std::cerr << "Error: invalid port" << std::endl, false);
+		return (cerr << "Error: invalid port" << endl, false);
 	ss >> port;
 
 	if (port >= 1024 && port <= 65535)
 		return (true);
-	return std::cerr << "Error: port out of range: 1024 -> 65535" << std::endl, false;
+	return cerr << "Error: port out of range: 1024 -> 65535" << endl, false;
 }
 
 /**
@@ -74,9 +74,9 @@ bool	ircserv::ircserv_bind(sockaddr_in6 *addr, int sock)
 	addr->sin6_len = sizeof(sockaddr_in6);
 	int opt = 1;
 	if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
-		return std::cerr << "Error: setsockopt()" << std::endl, false;
+		return cerr << "Error: setsockopt()" << endl, false;
 	if (bind(sock, (sockaddr *)addr, sizeof(sockaddr_in6)) == -1)
-		return std::cerr << "Error: bind()" << std::endl, false;
+		return cerr << "Error: bind()" << endl, false;
 	return (true);
 }
 
@@ -85,7 +85,7 @@ bool	ircserv::ircserv_bind(sockaddr_in6 *addr, int sock)
  * @brief store message in str to be used later
  * @return false if syscall recv() faild
 */
-bool	ircserv::ircserv_msg(pollfd& Ps, std::string& str)
+bool	ircserv::ircserv_msg(pollfd& Ps, string& str, int *num)
 {
 	int			rs;
 	char		buffer[1024];
@@ -96,12 +96,13 @@ bool	ircserv::ircserv_msg(pollfd& Ps, std::string& str)
 	// if (buffer != NULL)
 		cout << "{recv: " << buffer << "}" << std::endl;
 	if (rs == -1)
-		return std::cerr << "Error: recv()" << std::endl, false;
+		return cerr << "Error: recv()" << endl, false;
 	if (rs == 0)
 	{
-		cerr << "client disconnnected" << std::endl;
+		cerr << "client disconnnected" << endl;
 		user.erase(Ps.fd);
 		close(Ps.fd);
+		(*num)--;
 		Ps.fd = -1;
 		return false;
 	}
@@ -126,10 +127,10 @@ bool	ircserv::ircserv_msg(pollfd& Ps, std::string& str)
  * @param str strint containig the cmd and params
  * @brief convert cmd from a string to deque
 */
-bool	ircserv::ircserv_cmd(std::deque<std::string>& deq, std::string str)
+bool	ircserv::ircserv_cmd(deque<string>& deq, string str)
 {
-	std::stringstream	ss(str);
-	std::string			splited;
+	stringstream	ss(str);
+	string			splited;
 
 	while (ss >> splited)
 		deq.push_back(splited);
@@ -180,12 +181,12 @@ char	ircserv::ircserv_auth(pollfd& Ps, std::string& str)
 	return 1;
 }
 
-bool	ircserv::ircserv_receiv(pollfd& Ps)
+bool	ircserv::ircserv_receiv(pollfd& Ps, int *num)
 {
-	std::string str;
-	std::deque<std::string> deq;
+	string str;
+	deque<string> deq;
 
-	if (ircserv_msg(Ps, str) == false)
+	if (ircserv_msg(Ps, str, num) == false)
 		return false;
 	if (ircserv_cmd(deq, str) == false)
 		return false;
@@ -219,12 +220,12 @@ bool	ircserv::ircserv_connect(pollfd& Ps, int sock, int *num)
 
 	client = accept(sock, NULL, NULL);
 	if (client == -1)
-		return std::cerr << "Error: accept()" << std::endl, false;
+		return cerr << "Error: accept()" << endl, false;
 	else
 	{
 		Ps.fd = client;
 		Ps.events = POLLIN;
-		std::cout << "new connection established fd == {" << Ps.fd << "}" << std::endl;
+		cout << "new connection established fd == {" << Ps.fd << "}" << endl;
 		user[Ps.fd] = ::client(Ps.fd);
 		// user[Ps.fd](::client(Ps.fd));
 		(*num)++;
@@ -252,15 +253,22 @@ bool	ircserv::ircserv_serv(int sock)
 	{
 		rs = poll(Ps, MAX_POLLFD, -1);
 		if (rs == -1)
-			return std::cerr << "Error: poll()" << std::endl, false;
+			return cerr << "Error: poll()" << endl, false;
 		for (int i = 0; i < num; i++)
 		{
 			if (Ps[i].revents & POLLIN)
 			{
 				if (Ps[i].fd == sock)
-					ircserv_connect(Ps[num],  sock, &num);
+				{
+					for (rs = 0; rs < num; rs++)
+					{
+						if (Ps[rs].fd == -1)
+							break ;
+					}
+					ircserv_connect(Ps[rs],  sock, &num);
+				}
 				else
-					ircserv_receiv(Ps[i]);
+					ircserv_receiv(Ps[i], &num);
 			}
 		}
 	}
@@ -278,11 +286,11 @@ bool	ircserv::ircserv_run(void)
 
 	sock = socket(PF_INET6, SOCK_STREAM, 0);
 	if (sock == -1)
-		return std::cerr << "Error: socket()" << std::endl, false;
+		return cerr << "Error: socket()" << endl, false;
 	if (ircserv_bind(&addr, sock) == false)
 		return close(sock), false;
 	if (listen(sock, SOMAXCONN) == -1)
-		return std::cerr << "Error: listen()" << std::endl, close(sock), false;	
+		return cerr << "Error: listen()" << endl, close(sock), false;	
 	if (ircserv_serv(sock) == false)
 		return close(sock), false;
 	return (close(sock), true);

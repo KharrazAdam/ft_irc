@@ -6,7 +6,7 @@
 /*   By: ael-hamd <ael-hamd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:08:52 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/18 22:29:34 by ael-hamd         ###   ########.fr       */
+/*   Updated: 2023/06/18 23:27:46 by ael-hamd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,9 @@ private:
 	bool	ircserv_run(void);
 	bool	ircserv_bind(sockaddr_in6 *addr, int sock);
 	bool	ircserv_serv(int sock);
-	bool	ircserv_receiv(pollfd& Ps);
+	bool	ircserv_receiv(pollfd& Ps, int *num);
 	bool	ircserv_connect(pollfd& Ps, int sock, int *num);
-	bool	ircserv_msg(pollfd& Ps, std::string& str);
+	bool	ircserv_msg(pollfd& Ps, std::string& str, int *num);
 	bool	ircserv_cmd(std::deque<std::string>&, std::string str);
 	char	ircserv_auth(pollfd& Ps, std::string&);
 	//<------ a reviser--------->
