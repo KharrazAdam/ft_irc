@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ael-hamd <ael-hamd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:38:15 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/18 02:53:39 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/18 21:53:59 by ael-hamd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,9 @@ bool	client::cmd_PASS(std::deque<std::string>& deq, std::string& pass)
 	if (deq.size() == 1)
 		return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
 	deq.pop_front();
-	if (deq.size() > 1 || deq.front().compare(pass) != 0)
-		return send_error("ERR_PASSWDMISMATCH"), false; // ERR_PASSWDMISMATCH
+	// if (deq.size() > 1 || deq.front().compare(pass) != 0)
+	// 	return send_error("ERR_PASSWDMISMATCH"), false; // ERR_PASSWDMISMATCH
+	(void)pass;
 	return auth |= PASSWORD, true;
 }
 
@@ -126,30 +127,32 @@ bool	client::cmd_NICK(std::deque<std::string>& deq, std::map<int, client>& cl)
 		auth |= AUTHENTIFICATED;
 		RPL_WELCOME(); // send welcome
 	}
-	return send_message("NICK NAME DONE"), true;
+	//return send_message("NICK NAME DONE"), true;
+	return true;
 }
 
 bool	client::cmd_USER(std::deque<std::string>& deq)
 {
-	if (auth & AUTHENTIFICATED)
-		return send_error("ERR_ALREADYREGISTRED"), false; // ERR_ALREADYREGISTRED
-	if (deq.size() < 5)
-		return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
-	if (deq[4][0] != ':')
-		return send_error("ERROR SYNTAX"), false; // ERR_chars
-	deq.pop_front();
-	username = deq.front();
-	for (size_t i = 0; i < 3; i++)
-		deq.pop_front();
-	deq.front().erase(deq.front().begin());
-	while (1)
-	{
-		realname += deq.front();
-		deq.pop_front();
-		if (deq.empty() == true)
-			break ;
-		realname += " ";
-	}
+	(void)deq;	
+	// if (auth & AUTHENTIFICATED)
+	// 	return send_error("ERR_ALREADYREGISTRED"), false; // ERR_ALREADYREGISTRED
+	// if (deq.size() < 5)
+	// 	return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
+	// if (deq[4][0] != ':')
+	// 	return send_error("ERROR SYNTAX"), false; // ERR_chars
+	// deq.pop_front();
+	// username = deq.front();
+	// for (size_t i = 0; i < 3; i++)
+	// 	deq.pop_front();
+	// deq.front().erase(deq.front().begin());
+	// while (1)
+	// {
+	// 	realname += deq.front();
+	// 	deq.pop_front();
+	// 	if (deq.empty() == true)
+	// 		break ;
+	// 	realname += " ";
+	// }
 	auth |= USERNAME;
 	if ((auth & NICKNAME))
 	{
@@ -162,11 +165,11 @@ bool	client::cmd_USER(std::deque<std::string>& deq)
 
 void	client::send_message(const char* er) const
 {
-		std::string str;
+	std::string str;
 
 	str.clear();
-	str.append("MESSAGE ") += nickname + " " + er;
-	if (send(fd, str.append("\n").c_str(), str.size() + 1, 0) == -1)
+	str += er;
+	if (send(fd, str.c_str(), str.size() + 1, 0) == -1)
 		send_message(er);
 }
 
@@ -176,13 +179,41 @@ void	client::send_error(const char* er) const
 
 	str.clear();
 	str += er;
-	if (send(fd, str.append("\n").c_str(), str.size() + 1, 0) == -1)
+	if (send(fd, str.c_str(), str.size() + 1, 0) == -1)
 		send_error(er);
 }
 
 void	client::RPL_WELCOME(void)
 {
-	send(fd, "<client> :Welcome to the <networkname> Network, <nick>[!<user>@<host>]\n",72, 0);
+	/* e1r11p2.1337.ma 001 a :Welcome to the Internet Relay Network a!~a@127.0.0.1
+	:e1r11p2.1337.ma 002 a :Your host is e1r11p2.1337.ma, running version leet-irc 1.0.0
+	:e1r11p2.1337.ma 003 a :This server has been started Wed Oct 12 2022
+	:e1r11p2.1337.ma 004 a e1r11p2.1337.ma leet-irc 1.0.0 aioOrsw aovimntklbeI
+	:e1r11p2.1337.ma 251 a :There are 2 users and 0 services on 1 servers
+	:e1r11p2.1337.ma 375 a :- e1r11p2.1337.ma Message of the day -
+	:e1r11p2.1337.ma 376 a :End of MOTD command*/
+
+	// string msg = ":irc.example.com 001 " + nickname + " :Welcome to the Example IRC Network, " + nickname + "!" + username + "@localhost" + "\r\n";
+	// msg += ":irc.example.com 002 " + nickname + " :Your host is irc.example.com, running version 1.0\r\n";
+	// msg += ":irc.example.com 003 " + nickname + " :This server was created 22/03/2023\r\n";
+	// msg += ":irc.example.com 004 " + nickname + " irc.example.com 1.0 aovimntklbeI\r\n";
+	// msg += ":irc.example.com 251 " + nickname + " :There are 2 users and 0 services on 1 servers\r\n";
+	// msg += ":irc.example.com 375 " + nickname + " :- irc.example.com Message of the day -\r\n";
+	// msg += ":irc.example.com 372 " + nickname + " :- Welcome to the Example IRC Network, " + nickname + "!" + username + "@localhost" + "\r\n";
+	// msg += ":irc.example.com 376 " + nickname + " :End of /MOTD command.\r\n";
+	
+
+		std::string msg = (":ircserv 001 " + nickname + " :welcome to ircserv\r\n"
+			":ircserv 002 " + nickname + " :Your host is ircserv, running version 1.0\r\n"
+			":ircserv 003 " + nickname + " :This server was created 22/03/2023\r\n"
+			":ircserv 004 " + nickname + " ircserv 1.0 - -\r\n"
+			":ircserv 372 " + nickname + " welcome to ircserv\r\n"
+			":ircserv 376 " + nickname + " :End of /MOTD command\r\n");
+
+	
+	//string msg = ":irc.example.com 001 " + nickname + " :Welcome to the Example IRC Network, " + nickname + "!" + username + "@localhost" + "\r\n";
+	send(fd, msg.c_str(), msg.size(), 0);
+	// send(fd, "<client> :Welcome to the <networkname> Network, <nick>[!<user>@<host>]\n",72, 0);
 }
 
 void	client::com_sep(std::deque<std::string>& deq, std::vector<std::string>& vec)

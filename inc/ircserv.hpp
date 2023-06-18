@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ael-hamd <ael-hamd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:08:52 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/18 04:33:33 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/18 22:29:34 by ael-hamd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ private:
 	bool	ircserv_connect(pollfd& Ps, int sock, int *num);
 	bool	ircserv_msg(pollfd& Ps, std::string& str);
 	bool	ircserv_cmd(std::deque<std::string>&, std::string str);
-	char	ircserv_auth(pollfd& Ps, std::deque<std::string>& deq);
+	char	ircserv_auth(pollfd& Ps, std::string&);
 	//<------ a reviser--------->
 
 public:

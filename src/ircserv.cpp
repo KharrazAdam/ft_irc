@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ael-hamd <ael-hamd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/18 04:32:55 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/18 23:20:12 by ael-hamd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,12 +91,15 @@ bool	ircserv::ircserv_msg(pollfd& Ps, std::string& str)
 	char		buffer[1024];
 	
 	str.clear();
+	bzero(buffer, 1024);
 	rs = recv(Ps.fd, buffer, 1024, 0);
+	// if (buffer != NULL)
+		cout << "{recv: " << buffer << "}" << std::endl;
 	if (rs == -1)
 		return std::cerr << "Error: recv()" << std::endl, false;
 	if (rs == 0)
 	{
-		std::cerr << "client disconnnected" << std::endl;
+		cerr << "client disconnnected" << std::endl;
 		user.erase(Ps.fd);
 		close(Ps.fd);
 		Ps.fd = -1;
@@ -105,6 +108,18 @@ bool	ircserv::ircserv_msg(pollfd& Ps, std::string& str)
 	str.append(buffer, rs);
 	return (true);
 }
+
+// int countNewlines(const std::string& str) {
+//     int newlineCount = 0;
+// 	int i = 0;
+//     while (str[i] != '\0') {
+//         if (str[i] == '\n')
+//             newlineCount++;
+// 		i++;
+//     }
+//     return newlineCount;
+// }
+
 
 /**
  * @param deq deque to be filled
@@ -120,21 +135,49 @@ bool	ircserv::ircserv_cmd(std::deque<std::string>& deq, std::string str)
 		deq.push_back(splited);
 	if (deq.empty() == true)
 		return false;
-	deq.front() = makeUppercase(deq.front());
 	return true;
 }
 
-char	ircserv::ircserv_auth(pollfd& Ps, std::deque<std::string>& deq)
+void	nl_sep(std::vector<std::string>& vec, std::string& str)
 {
-	// if (deq.front() == "PASS")
-	// 	return user[Ps.fd].cmd_PASS(deq, password);	
-	// if ((user[Ps.fd].ShowAuth() & PASSWORD) == 0)
-	// 	return false;
-	if (deq.front() == "NICK")
-		return user[Ps.fd].cmd_NICK(deq, user);
-	if (deq.front() == "USER")
-		return user[Ps.fd].cmd_USER(deq);
-	return 2;
+	std::stringstream	ss(str);
+
+	while (std::getline(ss, str, '\n'))
+        vec.push_back(str);
+}
+
+char	ircserv::ircserv_auth(pollfd& Ps, std::string& str)
+{
+	size_t i = 0;
+	// int nw = countNewlines(str);
+	std::deque<std::string> deq;
+	std::vector<std::string> vec;
+	nl_sep(vec, str);
+
+	while (i < vec.size())
+	{
+		deq.clear();
+		string line = vec[i];
+		line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
+		std::cout << "---" << line << "----" << std::endl;
+		ircserv_cmd(deq, line);	
+		deq[0] = makeUppercase(deq.front());
+		if (deq.front() == "PASS")
+			user[Ps.fd].cmd_PASS(deq, password);	
+		if ((user[Ps.fd].ShowAuth() & PASSWORD) == 0)
+		{
+			i = 0;
+			break ;
+		}
+		if (deq.front() == "NICK")
+			user[Ps.fd].cmd_NICK(deq, user);
+		if (deq.front() == "USER")
+			user[Ps.fd].cmd_USER(deq);
+		i++;
+	}
+	if (i == 0)
+		return 2;
+	return 1;
 }
 
 bool	ircserv::ircserv_receiv(pollfd& Ps)
@@ -146,10 +189,10 @@ bool	ircserv::ircserv_receiv(pollfd& Ps)
 		return false;
 	if (ircserv_cmd(deq, str) == false)
 		return false;
-	if (ircserv_auth(Ps, deq) != 2)
+	if (ircserv_auth(Ps, str) != 2)
 		return true;
-	// if ((user[Ps.fd].ShowAuth() & AUTHENTIFICATED) == 0)
-	// 	return false;
+	if ((user[Ps.fd].ShowAuth() & AUTHENTIFICATED) == 0)
+		return false;
 	if (deq.front() == "JOIN")
 		return user[Ps.fd].cmd_JOIN(deq, channels);
 	else if (deq.front() == "SHOW")

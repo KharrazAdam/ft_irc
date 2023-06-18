@@ -48,6 +48,8 @@ public:
 	bool							inviteUser(client &cl);
 	std::vector<client *> users;
 	std::vector<client *> mods;
+
+	string join_msg(string nickname,string username);
 private:
 	std::vector<client *>	invited;
 	// std::map<std::string, int>&	getUsers(void);

@@ -3,14 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ael-hamd <ael-hamd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 05:54:56 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/18 04:33:06 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/18 17:47:24 by ael-hamd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client.hpp"
+
+// 
+//   :dan!~h@localhost PRIVMSG #coolpeople :Hi everyone!
+//                                   ; Message from dan to the channel
+//                                   #coolpeopl
+bool client::print_pvmsg(int fd, std::string& message, std::string& receiver, bool isChannel)
+{
+	string msg;
+	if (isChannel)
+		msg = ":" + nickname + "!"+nickname+"@" + "localhost" + " PRIVMSG " + receiver + " :" + message + "\r\n";
+	else
+		msg = ":" + nickname + " PRIVMSG " + receiver + " :" + message + "\r\n";
+	if (send(fd, msg.c_str(), msg.size(), 0) == -1)
+		return false;
+	return true;
+}
+
 
 bool	client::msgCl(std::map<int, client>& cl, std::string& message, std::string& receiver)
 {
@@ -23,7 +40,7 @@ bool	client::msgCl(std::map<int, client>& cl, std::string& message, std::string&
 	}
 	if (it == cl.end())
 		return send_error("ERR_NOSUCHNICK"), false;
-	else if (send((*it).second.getFd(), message.c_str(), message.size(), 0) == -1)
+	else if (!print_pvmsg((*it).second.getFd(), message, receiver, false))
 		return send_error("ERR_SYSCALL_SEND"), false;
 	return true;
 }
@@ -38,7 +55,8 @@ bool	client::msgCh(std::map<std::string, Channel>& ch, std::string& message, std
 			return send_error("ERR_CANNOTSENDTOCHAN"), false;
 		for (size_t j = 0; j < ch[receiver].users.size(); j++)
 		{
-			if (send(ch[receiver].users[j]->getFd(), message.c_str(), message.size(), 0) == -1)
+			
+			if (!print_pvmsg(ch[receiver].users[j]->getFd(), message, receiver, true))
 				send_error("ERR_SYSCALL_SEND");
 		}
 	}

@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ael-hamd <ael-hamd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 17:11:18 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/18 02:55:40 by akharraz         ###   ########.fr       */
+/*   Updated: 2023/06/18 16:41:33 by ael-hamd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "channel.hpp"
+
+// this verstion works with limechat and adium
 
 Channel::Channel():title(""), key(""), topic(""), l(-1), i(false), t(false){};
 Channel::Channel(std::string T, std::string K):title(T), key(K), topic(""), l(-1), k(false), i(false), t(false)
@@ -75,6 +77,14 @@ std::vector<client *>::iterator	Channel::vecFind(std::vector<client *>& vec, std
 	}
 	return it;
 }
+string Channel::join_msg(string nickname,string username)
+{
+	string msg;
+	msg = ":" + nickname + "!" + username + "@localhost JOIN " + this->title + "\r\n";
+	msg += ":irc.localhost 353 " + nickname + " = " + this->title + " \r\n";
+	msg += ":irc.localhost 366 " + nickname + " " + this->title + " :End of /NAMES list.\r\n";
+	return msg;
+}
 
 bool	Channel::add_user(client &cl)
 {   
@@ -91,6 +101,7 @@ bool	Channel::add_user(client &cl)
 		invited.erase(it);
 	}
 	users.push_back(&cl);
+	cl.send_message(join_msg(cl.getNick(),cl.getNick()).c_str());
 	return true;
 }
 
