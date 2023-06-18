@@ -1,16 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   client.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ael-hamd <ael-hamd@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/02 08:27:46 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/18 17:19:56 by ael-hamd         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-
 # ifndef CLIENT_HPP
 # define CLIENT_HPP
 
@@ -83,15 +70,20 @@ public:
 	void	flag_k(Channel&, bool, std::deque<std::string>&);
 	void	flag_o(Channel&, bool, client&);
 
-	// KICK
 	bool	cmd_KICK(std::deque<std::string>&, std::map<std::string, Channel>&);
-	// TOPIC
+
 	bool	cmd_TOPIC(std::deque<std::string>&, std::map<std::string, Channel>&);
-	// INVITE
+	
 	bool	cmd_INVITE(std::deque<std::string>&, std::map<int, client>&, std::map<std::string, Channel>&);
+
+	bool	cmd_USMELL(std::deque<std::string>&, std::map<int, client>&);
 	// ....
-	// Debug
+	// bonus
 	bool	cmd_SHOW(std::deque<std::string>&, std::map<std::string, Channel>&);
+	string	getMessage(string category);
+	void	sendUknownMessage(const char* msg) const;
+
+	
 	// <-----errors--------->
 	
 	void	send_error(const char *) const;

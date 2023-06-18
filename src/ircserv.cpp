@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ircserv.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ael-hamd <ael-hamd@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/18 23:26:56 by ael-hamd         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "ircserv.hpp"
 # define TIMEOUT 1000
 
@@ -210,6 +198,8 @@ bool	ircserv::ircserv_receiv(pollfd& Ps, int *num)
 		return user[Ps.fd].cmd_INVITE(deq, user, channels);
 	else if (deq.front() == "TOPIC")
 		return user[Ps.fd].cmd_TOPIC(deq, channels);
+	else if (deq.front() == "/USMELL")
+		return user[Ps.fd].cmd_USMELL(deq, user);
 	return true;
 	// mixt poulet with bigy andalouse xl
 }
