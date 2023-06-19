@@ -41,7 +41,7 @@ public:
 	client();
 	~client();
 	int				ShowAuth(void);
-	std::string		getNick(void);
+	std::string&		getNick(void);
 
 	int				getFd(void);
 	std::map<int, client>::iterator	mapFind(std::map<int, client>&, std::string&);

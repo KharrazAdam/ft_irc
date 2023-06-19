@@ -41,6 +41,7 @@ private:
 	bool	ircserv_msg(pollfd& Ps, std::string& str, int *num);
 	bool	ircserv_cmd(std::deque<std::string>&, std::string str);
 	char	ircserv_auth(pollfd& Ps, std::string&);
+	bool	ircserv_quit(pollfd& Ps);
 	//<------ a reviser--------->
 
 public:
