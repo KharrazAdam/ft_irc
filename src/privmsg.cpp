@@ -65,14 +65,14 @@ bool	client::cmd_PRIVMSG(std::deque<std::string>& deq, std::map<int, client>& cl
 	while (true)
 	{
 		message.append(deq.front());
+		message.erase(std::remove(message.begin(), message.end(), '\r'), message.end());
 		deq.pop_front();
 		if (deq.empty() == true)
-		{	
-			message.append("\n");
 			break ;
-		}
 		message.append(" ");
 	}
+	if (message.front() == ':')
+		message.erase(0, 1);
 	for (size_t i = 0; i < receivers.size(); i++)
 	{
 		if (receivers[i][0] == '#')

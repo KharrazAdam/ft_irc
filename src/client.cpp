@@ -85,12 +85,12 @@ int	client::getFd(void)
 bool	client::cmd_PASS(std::deque<std::string>& deq, std::string& pass)
 {
 	if (auth & PASSWORD)
-		return send_error("ERR_ALREADYREGISTERED"), true; // ERR_ALREADYREGISTERED
+		return send_error("ERR_ALREADYREGISTERED"), true; // ERR_ALREADYREGISTERED  // done !
 	if (deq.size() == 1)
-		return send_error("ERR_NEEDMOREPARAMS", "PASS"), false; // ERR_NEEDMOREPARAMS
+		return send_error("ERR_NEEDMOREPARAMS", "PASS"), false; // ERR_NEEDMOREPARAMS  // done !
 	deq.pop_front();
 	// if (deq.size() > 1 || deq.front().compare(pass) != 0)
-	// 	return send_error("ERR_PASSWDMISMATCH"), false; // ERR_PASSWDMISMATCH
+	// 	return send_error("ERR_PASSWDMISMATCH"), false; // ERR_PASSWDMISMATCH // done !
 	(void)pass;
 	return auth |= PASSWORD, true;
 }
@@ -103,10 +103,10 @@ bool	client::cmd_NICK(std::deque<std::string>& deq, std::map<int, client>& cl)
 	std::map<int, client>::iterator it = cl.begin();
 
 	if (deq.size() == 1)
-		return send_error("ERR_NONICKNAMEGIVEN"), false; // ERR_NONICKNAMEGIVEN
+		return send_error("ERR_NONICKNAMEGIVEN"), false; // ERR_NONICKNAMEGIVEN  // done !
 	deq.pop_front();
 	if (deq.size() > 1 || deq.front().size() < 3 || deq.front()[0] == '#' || deq.front()[0] == ':' || deq.front().substr(0, 2) == "#&" || deq.front().substr(0, 2) == "&#")
-		return send_error("ERR_ERRONEUSNICKNAME"), false; // ERR_ERRONEUSNICKNAME
+		return send_error("ERR_ERRONEUSNICKNAME"), false; // ERR_ERRONEUSNICKNAME  // done !
 	while (it != cl.end())
 	{
 		if ((*it).second.nickname == deq.front())
@@ -128,9 +128,9 @@ bool	client::cmd_USER(std::deque<std::string>& deq)
 {
 	(void)deq;
 	// if (auth & AUTHENTIFICATED)
-	// 	return send_error("ERR_ALREADYREGISTRED"), false; // ERR_ALREADYREGISTRED
+	// 	return send_error("ERR_ALREADYREGISTERED"), false; // ERR_ALREADYREGISTERED   // done !
 	// if (deq.size() < 5)
-	// 	return send_error("ERR_NEEDMOREPARAMS", "USER"), false; // ERR_NEEDMOREPARAMS
+	// 	return send_error("ERR_NEEDMOREPARAMS", "USER"), false; // ERR_NEEDMOREPARAMS   // done !
 	// if (deq[4][0] != ':')
 	// 	return send_error("ERROR SYNTAX"), false; // ERR_chars
 	// deq.pop_front();
@@ -163,23 +163,10 @@ void	client::send_message(string str) const
 			send_message(str);
 }
 
-void	client::send_error(string err , string cmd) const
-{
-	if (err == "ERR_NEEDMOREPARAMS") {
-		send_message(::string(":startimes42 461 "+nickname+" "+ cmd +" :Not enough parameters\r\n"));
-	}
-}
-
 void	client::send_error(string str) const
 {
 	if (str == "ERR_NOSUCHNICK") {
 		send_message(::string(":startimes42 401 * "+ nickname +" :No such nick/channel\r\n"));
-	}
-	else if (str == "ERR_CHANOPRIVSNEEDED") {
-		send_message(::string(":startimes42 482 * "+nickname+" :You're not channel operator\r\n"));
-	}
-	else if (str == "ERR_NOSUCHCHANNEL") {
-		send_message(::string(":startimes42 403 * "+nickname+" :No such channel\r\n"));
 	}
 	else if (str ==  "ERR_NICKNAMEINUSE") {
 		send_message(::string(":startimes42 433 * "+nickname+" is already in use.\r\n"));
@@ -202,6 +189,37 @@ void	client::send_error(string str) const
 
 }
 
+void	client::send_error(string err , string cmd) const
+{
+	if (err == "ERR_NEEDMOREPARAMS") {
+		send_message(::string(":startimes42 461 "+nickname+" "+ cmd +" :Not enough parameters\r\n"));
+	}
+	else if (err == "ERR_CHANNELISFULL"){
+		send_message(::string(":startimes42 471 "+nickname+" "+ cmd +" :Cannot join channel (+l) - Channel is full\r\n"));
+	}
+	else if (err == "ERR_INVITEONLYCHAN") {
+		send_message(::string(":startimes42 473 "+nickname+" "+ cmd +" :Cannot join channel (+i) - You must be invited\r\n"));
+	}
+	else if (err == "ERR_NOTONCHANNEL") {
+		send_message(::string(":startimes42 442 "+nickname+" "+ cmd +" :You're not on that channel\r\n"));
+	}
+	else if (err == "ERR_USERNOTINCHANNEL") {
+		send_message(::string(":startimes42 441 "+nickname+" "+ cmd +" :They aren't on that channel\r\n"));
+	}
+	else if (err == "ERR_NOTONCHANNEL") {
+		send_message(::string(":startimes42 442 "+nickname+" "+ cmd +" :You're not on that channel\r\n"));
+	}
+	else if (err == "ERR_CHANOPRIVSNEEDED") {
+		send_message(::string(":startimes42 482 "+nickname+" "+ cmd +" :You're not channel operator\r\n"));
+	}
+	else if (err == "ERR_NOSUCHCHANNEL") {
+		send_message(::string(":startimes42 403 * "+nickname+" "+ cmd +" :No such channel\r\n"));
+	}
+	else if (err == "ERR_USERONCHANNEL") {
+		send_message(::string(":startimes42 443 * "+nickname+" "+ cmd +" :is already on channel\r\n"));
+	}
+}
+
 void	client::RPL_WELCOME(void)
 {
 	/* e1r11p2.1337.ma 001 a :Welcome to the Internet Relay Network a!~a@127.0.0.1
@@ -222,12 +240,12 @@ void	client::RPL_WELCOME(void)
 	// msg += ":irc.example.com 376 " + nickname + " :End of /MOTD command.\r\n";
 	
 
-		std::string msg = (":ircserv 001 " + nickname + " :welcome to ircserv\r\n"
-			":ircserv 002 " + nickname + " :Your host is ircserv, running version 1.0\r\n"
-			":ircserv 003 " + nickname + " :This server was created 22/03/2023\r\n"
-			":ircserv 004 " + nickname + " ircserv 1.0 - -\r\n"
-			":ircserv 372 " + nickname + " welcome to ircserv\r\n"
-			":ircserv 376 " + nickname + " :End of /MOTD command\r\n");
+		std::string msg = ("::startimes42 001 " + nickname + " :welcome to :startimes42\r\n"
+			":startimes42 002 " + nickname + " :Your host is :startimes42, running version 1.0\r\n"
+			":startimes42 003 " + nickname + " :This server was created 22/03/2023\r\n"
+			":startimes42 004 " + nickname + " :startimes42 1.0 - -\r\n"
+			":startimes42 372 " + nickname + " welcome to :startimes42\r\n"
+			":startimes42 376 " + nickname + " :End of /MOTD command\r\n");
 
 	
 	//string msg = ":irc.example.com 001 " + nickname + " :Welcome to the Example IRC Network, " + nickname + "!" + username + "@localhost" + "\r\n";
@@ -253,16 +271,16 @@ bool client::cmd_KICK(std::deque<std::string>& deq, std::map<std::string,Channel
 	Channel						*channel;
 
 	if (deq.size() < 3)
-		return send_error("ERR_NEEDMOREPARAMS", "KICK"), false; // ERR_NEEDMOREPARAMS
+		return send_error("ERR_NEEDMOREPARAMS", "KICK"), false; // ERR_NEEDMOREPARAMS   // done !
 	chan = deq[1];
 	deq.pop_front();
 	com_sep(deq, nicks);
 	if (channels.find(chan) == channels.end())
-		return send_error("ERR_NOSUCHCHANNEL"), false; // ERR_NOSUCHCHANNEL
+		return send_error("ERR_NOSUCHCHANNEL", chan), false; // ERR_NOSUCHCHANNEL    // done !
 	channel = &channels[chan];
 	// std::vector<int>	&mods = channel->getMods();
 	if (channel->vecFind(channel->mods, *this) == channel->mods.end())
-		return send_error("ERR_CHANOPRIVSNEEDED"), false; // ERR_CHANOPRIVSNEEDED
+		return send_error("ERR_CHANOPRIVSNEEDED", chan), false; // ERR_CHANOPRIVSNEEDED    // done !
 	for (size_t i = 0; i < nicks.size(); i++)
 	{
 		send_message(::string(":"+nickname + "!"+username +"@startimes42 KICK "+ chan + " alice :" + nicks[i] + "\r\n")); //
@@ -280,15 +298,15 @@ bool client::cmd_TOPIC(std::deque<std::string> & deq, std::map<std::string, Chan
 	std::string	topic;
 
     if (deq.size() < 2)
-		return send_error("ERR_NEEDMOREPARAMS", "TOPIC"), false; // ERR_NEEDMOREPARAMS
+		return send_error("ERR_NEEDMOREPARAMS", "TOPIC"), false; // ERR_NEEDMOREPARAMS  // done !
 	chan = deq[1];
 	topic = deq[2];
 	if (channels.find(chan) == channels.end())
-		return send_error("ERR_NOSUCHCHANNEL"), false; // ERR_NOSUCHCHANNEL
+		return send_error("ERR_NOSUCHCHANNEL", chan), false; // ERR_NOSUCHCHANNEL // done !
 	if (channels[chan].vecFind(channels[chan].users, *this) == channels[chan].users.end())
-		return send_error("ERR_NOTONCHANNEL"), false; // ERR_NOTONCHANNEL
-	if (channels[chan].isActive('t') && !channels[chan].isMod(*this))
-		return send_error("ERR_CHANOPRIVSNEEDED"), false; // ERR_CHANOPRIVSNEEDED
+		return send_error("ERR_NOTONCHANNEL", chan), false; // ERR_NOTONCHANNEL // done !
+	if (channels[chan].isActive('t') && !channels[chan].isMod(*this)) // done !
+		return send_error("ERR_CHANOPRIVSNEEDED", chan), false; // ERR_CHANOPRIVSNEEDED // done !
 	channels[chan].setTopic(topic, *this);
 	return true;
 }
@@ -298,22 +316,22 @@ bool client::cmd_INVITE(std::deque<std::string> & deq, std::map<int, client>& us
 	std::string	chan;
 	std::string	nick;
 	if (deq.size() < 3)
-		return send_error("ERR_NEEDMOREPARAMS", "INVITE"), false; // ERR_NEEDMOREPARAMS
+		return send_error("ERR_NEEDMOREPARAMS", "INVITE"), false; // ERR_NEEDMOREPARAMS // done !
 	chan = deq[1];
 	nick = deq[2];
 	if (channels.find(chan) == channels.end())
-		return send_error("ERR_NOSUCHCHANNEL"), false; // ERR_NOSUCHCHANNEL
+		return send_error("ERR_NOSUCHCHANNEL"), false; // ERR_NOSUCHCHANNEL // done !
 	if (channels[chan].vecFind(channels[chan].users, *this) == channels[chan].users.end())
-		return send_error("ERR_NOTONCHANNEL"), false; // ERR_NOTONCHANNEL
+		return send_error("ERR_NOTONCHANNEL"), false; // ERR_NOTONCHANNEL // done !
 	if (channels[chan].isActive('i') && !channels[chan].isMod(*this))
-		return send_error("ERR_CHANOPRIVSNEEDED"), false; // ERR_CHANOPRIVSNEEDED
+		return send_error("ERR_CHANOPRIVSNEEDED"), false; // ERR_CHANOPRIVSNEEDED	// done !
 	if (channels[chan].vecFind(channels[chan].users, nick) != channels[chan].users.end())
-		return send_error("ERR_USERONCHANNEL"), false; // ERR_USERONCHANNEL
+		return send_error("ERR_USERONCHANNEL"), false; // ERR_USERONCHANNEL // done !
 	// if (channels[chan].vecFind(channels[chan].users, nick) != channels[chan].users.end())
 	if (mapFind(users, nick) != users.end())
 		channels[chan].inviteUser((*mapFind(users, nick)).second);
 	else
-		return send_error("ERR_NOSUCHNICK"), false; // ERR_NOSUCHNICK
+		return send_error("ERR_NOSUCHNICK"), false; // ERR_NOSUCHNICK // done !
 	return true;
 }
 
@@ -346,11 +364,11 @@ bool client::cmd_USMELL(std::deque<std::string> & deq, std::map<int, client>& us
 	string 	msg;
 
 	if (deq.size() < 3)
-		return send_error("ERR_NEEDMOREPARAMS", "USMELL"), false; // ERR_NEEDMOREPARAMS
+		return send_error("ERR_NEEDMOREPARAMS", "USMELL"), false; // ERR_NEEDMOREPARAMS // done !
 	nick = deq[1];
 	category = deq[2];
 	if (mapFind(users, nick) == users.end())
-		return send_error("ERR_NOSUCHNICK"), false; // ERR_NOSUCHNICK
+		return send_error("ERR_NOSUCHNICK"), false; // ERR_NOSUCHNICK // done !
 	user = &(*mapFind(users, nick)).second;
 	msg = getMessage(category);
 	if (msg != "")
@@ -360,6 +378,6 @@ bool client::cmd_USMELL(std::deque<std::string> & deq, std::map<int, client>& us
 		return true;
 	}
 	else
-		return send_error("ERR_NOSUCHCATEGORY"), false; // ERR_NOSUCHCATEGORY
+		return send_error("ERR_NOSUCHCATEGORY"), false; // ERR_NOSUCHCATEGORY // done !
 
 }
