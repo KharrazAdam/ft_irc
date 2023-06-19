@@ -68,6 +68,11 @@ std::string&	client::getNick(void)
 	return nickname;
 }
 
+std::string&	client::getUsername(void)
+{
+	return username;
+}
+
 int	client::getFd(void)
 {
 	return fd;
@@ -105,7 +110,7 @@ bool	client::cmd_NICK(std::deque<std::string>& deq, std::map<int, client>& cl)
 	while (it != cl.end())
 	{
 		if ((*it).second.nickname == deq.front())
-			return send_message("ERR_NICKNAMEINUSE"), false; // ERR_NICKNAMEINUSE	
+			return send_message(::string(":startimes42 433 * "+deq.front()+" is already in use.\r\n")), false; // ERR_NICKNAMEINUSE	
 		it++;
 	}
 	nickname = deq.front();
@@ -121,25 +126,26 @@ bool	client::cmd_NICK(std::deque<std::string>& deq, std::map<int, client>& cl)
 
 bool	client::cmd_USER(std::deque<std::string>& deq)
 {
-	if (auth & AUTHENTIFICATED)
-		return send_error("ERR_ALREADYREGISTRED"), false; // ERR_ALREADYREGISTRED
-	if (deq.size() < 5)
-		return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
-	if (deq[4][0] != ':')
-		return send_error("ERROR SYNTAX"), false; // ERR_chars
-	deq.pop_front();
-	username = deq.front();
-	for (size_t i = 0; i < 3; i++)
-		deq.pop_front();
-	deq.front().erase(deq.front().begin());
-	while (1)
-	{
-		realname += deq.front();
-		deq.pop_front();
-		if (deq.empty() == true)
-			break ;
-		realname += " ";
-	}
+	(void)deq;
+	// if (auth & AUTHENTIFICATED)
+	// 	return send_error("ERR_ALREADYREGISTRED"), false; // ERR_ALREADYREGISTRED
+	// if (deq.size() < 5)
+	// 	return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
+	// if (deq[4][0] != ':')
+	// 	return send_error("ERROR SYNTAX"), false; // ERR_chars
+	// deq.pop_front();
+	// username = deq.front();
+	// for (size_t i = 0; i < 3; i++)
+	// 	deq.pop_front();
+	// deq.front().erase(deq.front().begin());
+	// while (1)
+	// {
+	// 	realname += deq.front();
+	// 	deq.pop_front();
+	// 	if (deq.empty() == true)
+	// 		break ;
+	// 	realname += " ";
+	// }
 	auth |= USERNAME;
 	if ((auth & NICKNAME))
 	{
@@ -150,19 +156,11 @@ bool	client::cmd_USER(std::deque<std::string>& deq)
 }
 
 
-void	client::send_message(const char* er) const
+void	client::send_message(string str) const
 {
-	cout << ">> send_message <<<" << endl;
-	std::string str;
-
-	str.clear();
-	str += er;
 	cout << "str = " << str << "and fd = "<< fd << endl;
 	if (send(fd, str.c_str(), str.size() + 1, 0) == -1)
-		{
-			cout << ">> Error <<<" << endl;
-			send_message(er);
-		}
+			send_message(str);
 }
 
 void	client::send_error(const char* er) const
@@ -239,6 +237,7 @@ bool client::cmd_KICK(std::deque<std::string>& deq, std::map<std::string,Channel
 	for (size_t i = 0; i < nicks.size(); i++)
 	{
 		// TODO: send kick message with comment message
+		send_message(::string(":"+nickname + "!"+username +"@startimes42 KICK "+ chan + " alice :" + nicks[i] + "\r\n"));
 		if (channel->kickUser(nicks[i], *this))
 			continue;
 
@@ -330,7 +329,7 @@ bool client::cmd_USMELL(std::deque<std::string> & deq, std::map<int, client>& us
 	if (msg != "")
 	{
 		msg = ":Emet: PRIVMSG " + nick + " :" + msg;
-		user->send_message(msg.c_str());
+		user->send_message(msg);
 		return true;
 	}
 	else

@@ -188,10 +188,8 @@ char	ircserv::ircserv_auth(pollfd& Ps, std::string& str)
 			user[Ps.fd].cmd_USER(deq);
 		i++;
 	}
-	if (i == 0){
-		cout << "im here !!! " << endl;
+	if (i == 0)
 		return 2;
-	}
 	return 1;
 }
 
@@ -210,6 +208,7 @@ bool	ircserv::ircserv_receiv(pollfd& Ps, int *num)
 		return false;
 	cout << "user authentificated == "<< deq.front() << endl;
 	deq[0] = makeUppercase(deq.front());
+	cout <<user[Ps.fd].getNick() <<" user has ben connected !!" << "" <<endl;
 	if (deq.front() == "JOIN")
 	{
 		cout << "im here >>> in join " << endl;
@@ -232,7 +231,6 @@ bool	ircserv::ircserv_receiv(pollfd& Ps, int *num)
 	else if (deq.front() == "/USMELL")
 		return user[Ps.fd].cmd_USMELL(deq, user);
 	return true;
-	// mixt poulet with bigy andalouse xl
 }
 
 bool	ircserv::ircserv_connect(pollfd& Ps, int sock, int *num)
@@ -246,7 +244,6 @@ bool	ircserv::ircserv_connect(pollfd& Ps, int sock, int *num)
 	{
 		Ps.fd = client;
 		Ps.events = POLLIN;
-		cout << "new connection established fd == {" << Ps.fd << "}" << endl;
 		user[Ps.fd] = ::client(Ps.fd);
 		// user[Ps.fd](::client(Ps.fd));
 		(*num)++;

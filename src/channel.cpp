@@ -78,11 +78,19 @@ string Channel::join_msg_exi(string nickname,string username)
 {
 	string msg;
 	msg = ":" + nickname + "!" + username + "@localhost JOIN " + this->title + "\r\n";
-	msg += ":irc.example.com 332 " + nickname + " " + this->title + " :" + this->topic + "\r\n";
+	msg += ":irc.example.com 332 " + nickname + " " + this->title + " :" + "this->topic bbbbbbbbbbb" + "\r\n";
 	msg += ":irc.example.com 333 " + nickname + " " + this->title + " " + nickname + " 1610732239\r\n";
 	msg += ":irc.example.com 353 " + nickname + " = " + this->title + " :" + nickname + "\r\n";
 	msg += ":irc.example.com 366 " + nickname + " " + this->title + " :End of /NAMES list.\r\n";
 	return msg;
+}
+
+void Channel::send_msg(string msg)
+{
+	for (size_t i = 0; i < users.size(); i++)
+	{
+		users[i]->send_message(msg);
+	}
 }
 
 bool	Channel::add_user(client &cl)
@@ -101,9 +109,15 @@ bool	Channel::add_user(client &cl)
 	}
 	users.push_back(&cl);
 	if (users.size() == 1) // new channel
-		cl.send_message(join_msg_exi(cl.getNick(),cl.getNick()).c_str());
+	{
+		cl.send_message(join_msg(cl.getNick(),cl.getNick()));
+		send_msg(":" + cl.getNick() + "!" + cl.getUsername() + "@localhost JOIN " + this->title + "\r\n");
+	}
 	else // existed channel
-		cl.send_message(join_msg(cl.getNick(),cl.getNick()).c_str());
+	{
+		cl.send_message(join_msg(cl.getNick(),cl.getNick()));
+		send_msg(":" + cl.getNick() + "!" + cl.getUsername() + "@localhost JOIN " + this->title + "\r\n");
+	}
 	if (mods.size() == 0)
 		mods.push_back(&cl);
 	return true;

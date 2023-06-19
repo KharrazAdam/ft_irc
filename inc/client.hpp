@@ -42,6 +42,7 @@ public:
 	~client();
 	int				ShowAuth(void);
 	std::string&		getNick(void);
+	std::string&		getUsername(void);
 
 	int				getFd(void);
 	std::map<int, client>::iterator	mapFind(std::map<int, client>&, std::string&);
@@ -86,7 +87,7 @@ public:
 	// <-----errors--------->
 	
 	void	send_error(const char *) const;
-	void	send_message(const char* er) const;
+	void	send_message(string str) const;
 	void	RPL_WELCOME(void);
 };
 #include "channel.hpp"

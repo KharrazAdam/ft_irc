@@ -67,6 +67,8 @@ private:
 	bool	k;
 	bool	i;
 	bool	t;
+
+	void send_msg(string msg);
 };
 #include "client.hpp"
 #endif
