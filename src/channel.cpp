@@ -89,6 +89,8 @@ bool	Channel::add_user(client &cl)
 		invited.erase(it);
 	}
 	users.push_back(&cl);
+	if (mods.size() == 0)
+		mods.push_back(&cl);
 	cl.send_message(join_msg(cl.getNick(),cl.getNick()).c_str());
 	return true;
 }

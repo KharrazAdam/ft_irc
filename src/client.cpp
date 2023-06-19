@@ -63,7 +63,7 @@ int	client::ShowAuth(void)
 	return auth;
 }
 
-std::string	client::getNick(void)
+std::string&	client::getNick(void)
 {
 	return nickname;
 }
@@ -270,8 +270,6 @@ bool client::cmd_INVITE(std::deque<std::string> & deq, std::map<int, client>& us
 		return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
 	chan = deq[1];
 	nick = deq[2];
-	cout << "salma : " << nick << endl;
-	cout << "chan : " << chan << endl;
 	if (channels.find(chan) == channels.end())
 		return send_error("ERR_NOSUCHCHANNEL"), false; // ERR_NOSUCHCHANNEL
 	if (channels[chan].vecFind(channels[chan].users, *this) == channels[chan].users.end())
