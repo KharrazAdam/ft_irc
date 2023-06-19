@@ -176,16 +176,25 @@ char	ircserv::ircserv_auth(pollfd& Ps, std::string& str)
 		ircserv_cmd(deq, line);	
 		deq[0] = makeUppercase(deq.front());
 		if (deq.front() == "PASS")
-			user[Ps.fd].cmd_PASS(deq, password);	
+		{
+			if (user[Ps.fd].cmd_PASS(deq, password) == false)
+				return false;
+		}
 		if ((user[Ps.fd].ShowAuth() & PASSWORD) == 0)
 		{
 			i = 0;
 			break ;
 		}
 		if (deq.front() == "NICK")
-			user[Ps.fd].cmd_NICK(deq, user);
+		{
+			if (user[Ps.fd].cmd_NICK(deq, user) == false)
+				return false;
+		}
 		if (deq.front() == "USER")
-			user[Ps.fd].cmd_USER(deq);
+		{
+			if (user[Ps.fd].cmd_USER(deq) == false)
+				return false;
+		}
 		i++;
 	}
 	if (i == 0)
