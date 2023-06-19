@@ -6,7 +6,7 @@
 /*   By: ael-hamd <ael-hamd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/19 00:30:23 by ael-hamd         ###   ########.fr       */
+/*   Updated: 2023/06/19 12:48:10 by ael-hamd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ bool	ircserv::ircserv_msg(pollfd& Ps, string& str, int *num)
 		cerr << "client disconnnected" << endl;
 		user.erase(Ps.fd);
 		close(Ps.fd);
-		(*num)--;
+		(void)(num);
 		Ps.fd = -1;
 		return false;
 	}

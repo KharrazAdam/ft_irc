@@ -6,7 +6,7 @@
 /*   By: ael-hamd <ael-hamd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 08:38:15 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/18 21:53:59 by ael-hamd         ###   ########.fr       */
+/*   Updated: 2023/06/18 23:55:42 by ael-hamd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,12 +165,17 @@ bool	client::cmd_USER(std::deque<std::string>& deq)
 
 void	client::send_message(const char* er) const
 {
+	cout << ">> send_message <<<" << endl;
 	std::string str;
 
 	str.clear();
 	str += er;
+	cout << "str = " << str << "and fd = "<< fd << endl;
 	if (send(fd, str.c_str(), str.size() + 1, 0) == -1)
-		send_message(er);
+		{
+			cout << ">> Error <<<" << endl;
+			send_message(er);
+		}
 }
 
 void	client::send_error(const char* er) const

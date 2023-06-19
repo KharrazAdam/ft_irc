@@ -6,7 +6,7 @@
 /*   By: ael-hamd <ael-hamd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 17:11:18 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/18 16:41:33 by ael-hamd         ###   ########.fr       */
+/*   Updated: 2023/06/19 13:01:15 by ael-hamd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,10 +101,10 @@ bool	Channel::add_user(client &cl)
 		invited.erase(it);
 	}
 	users.push_back(&cl);
+	cout << ">>>>user added to channel<<<<" << endl;
 	cl.send_message(join_msg(cl.getNick(),cl.getNick()).c_str());
 	return true;
 }
-
 
 bool Channel::kickUser(std::string &nick, client &cl)
 {
