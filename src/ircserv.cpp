@@ -90,10 +90,6 @@ bool	ircserv::ircserv_quit(pollfd& Ps)
 		//if user
 		else if ((*it).second.isUser(user[Ps.fd]))
 			(*it).second.users.erase((*it).second.vecFind((*it).second.users, user[Ps.fd].getNick()));
-		
-		// if invited to a channel
-		// if ((*it).second.isInvited(user[Ps.fd]) == true)
-		// 	(*it).second.users;
 	}
 	return true;
 }
@@ -181,11 +177,11 @@ char	ircserv::ircserv_auth(pollfd& Ps, std::string& str)
 		deq[0] = makeUppercase(deq.front());
 		if (deq.front() == "PASS")
 			user[Ps.fd].cmd_PASS(deq, password);	
-		// if ((user[Ps.fd].ShowAuth() & PASSWORD) == 0)
-		// {
-		// 	i = 0;
-		// 	break ;
-		// }
+		if ((user[Ps.fd].ShowAuth() & PASSWORD) == 0)
+		{
+			i = 0;
+			break ;
+		}
 		if (deq.front() == "NICK")
 			user[Ps.fd].cmd_NICK(deq, user);
 		if (deq.front() == "USER")
@@ -208,8 +204,8 @@ bool	ircserv::ircserv_receiv(pollfd& Ps, int *num)
 		return false;
 	ircserv_auth(Ps, str);
 	deq[0] = makeUppercase(deq.front());
-	// if ((user[Ps.fd].ShowAuth() & AUTHENTIFICATED) == 0)
-	// 	return false;
+	if ((user[Ps.fd].ShowAuth() & AUTHENTIFICATED) == 0)
+		return false;
 	if (deq.front() == "JOIN")
 		return user[Ps.fd].cmd_JOIN(deq, channels);
 	else if (deq.front() == "SHOW")
