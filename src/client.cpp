@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   client.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ael-hamd <ael-hamd@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/02 08:38:15 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/18 23:55:42 by ael-hamd         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "client.hpp"
 
 bool	is_alpha_valid(std::string& str)
@@ -75,7 +63,7 @@ int	client::ShowAuth(void)
 	return auth;
 }
 
-std::string	client::getNick(void)
+std::string&	client::getNick(void)
 {
 	return nickname;
 }
@@ -176,6 +164,16 @@ void	client::send_message(const char* er) const
 			cout << ">> Error <<<" << endl;
 			send_message(er);
 		}
+}
+
+void	client::sendUknownMessage(const char* msg) const
+{
+		std::string str;
+
+	str.clear();
+	str.append("MESSAGE ") += nickname + " " + msg;
+	if (send(fd, str.append("\n").c_str(), str.size() + 1, 0) == -1)
+		send_message(msg);
 }
 
 void	client::send_error(const char* er) const
@@ -288,8 +286,6 @@ bool client::cmd_INVITE(std::deque<std::string> & deq, std::map<int, client>& us
 		return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
 	chan = deq[1];
 	nick = deq[2];
-	cout << "salma : " << nick << endl;
-	cout << "chan : " << chan << endl;
 	if (channels.find(chan) == channels.end())
 		return send_error("ERR_NOSUCHCHANNEL"), false; // ERR_NOSUCHCHANNEL
 	if (channels[chan].vecFind(channels[chan].users, *this) == channels[chan].users.end())
@@ -306,3 +302,37 @@ bool client::cmd_INVITE(std::deque<std::string> & deq, std::map<int, client>& us
 	return true;
 }
 
+// send an anonymous message to a user
+// there are 3 categories of messages:
+// 1- You have been pinged, your feet smell.
+// 2- You have been pinged, you need to take a shower.
+// 3- You have been pinged, your armpits smell.
+
+string client::getMessage(string category)
+{
+	string message;
+	if (category == "bath")
+		message = "You have been pinged, you need to take a shower.";
+	else if (category == "feet")
+		message = "You have been pinged, your feet smell.";
+	else if (category == "armpit")
+		message = "You have been pinged, your armpits smell.";
+	return message;
+}
+
+bool client::cmd_USMELL(std::deque<std::string> & deq, std::map<int, client>& users)
+{
+	std::string	nick;
+	std::string	category;
+	client		*user;
+
+	if (deq.size() < 3)
+		return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
+	nick = deq[1];
+	category = deq[2];
+	if (mapFind(users, nick) == users.end())
+		return send_error("ERR_NOSUCHNICK"), false; // ERR_NOSUCHNICK
+	user = &(*mapFind(users, nick)).second;
+	user->send_message(getMessage(category).c_str());
+	return true;
+}

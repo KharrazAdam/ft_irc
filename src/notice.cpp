@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   notice.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: akharraz <akharraz@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/16 08:19:02 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/18 04:40:40 by akharraz         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "client.hpp"
 
 bool	client::noticeCl(std::map<int, client>& cl, std::string& message, std::string& receiver)

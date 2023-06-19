@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   channel.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ael-hamd <ael-hamd@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/11 17:11:18 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/19 13:01:15 by ael-hamd         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "channel.hpp"
 
 // this verstion works with limechat and adium
@@ -86,6 +74,17 @@ string Channel::join_msg(string nickname,string username)
 	return msg;
 }
 
+string Channel::join_msg_exi(string nickname,string username)
+{
+	string msg;
+	msg = ":" + nickname + "!" + username + "@localhost JOIN " + this->title + "\r\n";
+	msg += ":irc.example.com 332 " + nickname + " " + this->title + " :" + this->topic + "\r\n";
+	msg += ":irc.example.com 333 " + nickname + " " + this->title + " " + nickname + " 1610732239\r\n";
+	msg += ":irc.example.com 353 " + nickname + " = " + this->title + " :" + nickname + "\r\n";
+	msg += ":irc.example.com 366 " + nickname + " " + this->title + " :End of /NAMES list.\r\n";
+	return msg;
+}
+
 bool	Channel::add_user(client &cl)
 {   
 	std::vector<client *>::iterator	it;
@@ -101,8 +100,12 @@ bool	Channel::add_user(client &cl)
 		invited.erase(it);
 	}
 	users.push_back(&cl);
-	cout << ">>>>user added to channel<<<<" << endl;
-	cl.send_message(join_msg(cl.getNick(),cl.getNick()).c_str());
+	if (users.size() == 1) // new channel
+		cl.send_message(join_msg_exi(cl.getNick(),cl.getNick()).c_str());
+	else // existed channel
+		cl.send_message(join_msg(cl.getNick(),cl.getNick()).c_str());
+	if (mods.size() == 0)
+		mods.push_back(&cl);
 	return true;
 }
 

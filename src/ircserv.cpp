@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ircserv.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ael-hamd <ael-hamd@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/22 16:38:00 by akharraz          #+#    #+#             */
-/*   Updated: 2023/06/19 12:48:10 by ael-hamd         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "ircserv.hpp"
 # define TIMEOUT 1000
 
@@ -80,6 +68,32 @@ bool	ircserv::ircserv_bind(sockaddr_in6 *addr, int sock)
 	return (true);
 }
 
+bool	ircserv::ircserv_quit(pollfd& Ps)
+{
+	std::map<std::string, Channel>::iterator	it;
+
+	for (it = channels.begin(); it != channels.end(); it++)
+	{
+		// if invited
+		if ((*it).second.isInvited(user[Ps.fd]))
+			(*it).second.invited.erase((*it).second.vecFind((*it).second.invited, user[Ps.fd].getNick()));
+		// if moderator
+		if ((*it).second.isMod(user[Ps.fd]))
+		{
+			(*it).second.mods.erase((*it).second.vecFind((*it).second.mods, user[Ps.fd].getNick()));
+			(*it).second.users.erase((*it).second.vecFind((*it).second.users, user[Ps.fd].getNick()));
+			if ((*it).second.users.size() == 0)
+				(*it).second.invited.clear(); // close channel
+			if ((*it).second.mods.size() == 0 && (*it).second.users.size() > 0)
+				(*it).second.mods.push_back((*it).second.users.front()); // close channel
+		}
+		//if user
+		else if ((*it).second.isUser(user[Ps.fd]))
+			(*it).second.users.erase((*it).second.vecFind((*it).second.users, user[Ps.fd].getNick()));
+	}
+	return true;
+}
+
 /**
  * @param pollfd structur that holds client fd and events that can be monitored on the fd
  * @brief store message in str to be used later
@@ -93,12 +107,11 @@ bool	ircserv::ircserv_msg(pollfd& Ps, string& str, int *num)
 	str.clear();
 	bzero(buffer, 1024);
 	rs = recv(Ps.fd, buffer, 1024, 0);
-	// if (buffer != NULL)
-		cout << "{recv: " << buffer << "}" << std::endl;
 	if (rs == -1)
 		return cerr << "Error: recv()" << endl, false;
 	if (rs == 0)
 	{
+		ircserv_quit(Ps);
 		cerr << "client disconnnected" << endl;
 		user.erase(Ps.fd);
 		close(Ps.fd);
@@ -160,7 +173,6 @@ char	ircserv::ircserv_auth(pollfd& Ps, std::string& str)
 		deq.clear();
 		string line = vec[i];
 		line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
-		std::cout << "---" << line << "----" << std::endl;
 		ircserv_cmd(deq, line);	
 		deq[0] = makeUppercase(deq.front());
 		if (deq.front() == "PASS")
@@ -193,6 +205,7 @@ bool	ircserv::ircserv_receiv(pollfd& Ps, int *num)
 	if (ircserv_cmd(deq, str) == false)
 		return false;
 	ircserv_auth(Ps, str);
+	deq[0] = makeUppercase(deq.front());
 	if ((user[Ps.fd].ShowAuth() & AUTHENTIFICATED) == 0)
 		return false;
 	cout << "user authentificated == "<< deq.front() << endl;
@@ -216,6 +229,8 @@ bool	ircserv::ircserv_receiv(pollfd& Ps, int *num)
 		return user[Ps.fd].cmd_INVITE(deq, user, channels);
 	else if (deq.front() == "TOPIC")
 		return user[Ps.fd].cmd_TOPIC(deq, channels);
+	else if (deq.front() == "/USMELL")
+		return user[Ps.fd].cmd_USMELL(deq, user);
 	return true;
 	// mixt poulet with bigy andalouse xl
 }
