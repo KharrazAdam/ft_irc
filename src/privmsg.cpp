@@ -43,7 +43,8 @@ bool	client::msgCh(std::map<std::string, Channel>& ch, std::string& message, std
 			return send_error("ERR_CANNOTSENDTOCHAN"), false;
 		for (size_t j = 0; j < ch[receiver].users.size(); j++)
 		{
-			
+			if ((*this).getNick() == ch[receiver].users[j]->getNick())
+				continue ;
 			if (!print_pvmsg(ch[receiver].users[j]->getFd(), message, receiver, true))
 				send_error("ERR_SYSCALL_SEND");
 		}
