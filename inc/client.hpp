@@ -81,7 +81,6 @@ public:
 	// bonus
 	bool	cmd_SHOW(std::deque<std::string>&, std::map<std::string, Channel>&);
 	string	getMessage(string category);
-	void	sendUknownMessage(const char* msg) const;
 
 	
 	// <-----errors--------->
