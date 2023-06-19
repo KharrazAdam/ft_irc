@@ -39,7 +39,7 @@ void	client::flag_k(Channel& ch, bool sign, std::deque<std::string>& deq)
 	else
 	{
 		if (deq.empty())
-			return send_error("ERR_NEEDMOREPARAMS"), (void)1;
+			return send_error("ERR_NEEDMOREPARAMS", "MODE"), (void)1; // ERR_NEEDMOREPARAMS
 		ch.setKey(deq.front());
 		deq.pop_front();
 	}
@@ -68,7 +68,7 @@ bool	client::cmd_MODE(std::deque<std::string>& deq, std::map<int, client>& cl, s
 	bool	sign = true;
 	
 	if (deq.size() < 3)
-		return send_error("ERR_NEEDMOREPARAMS"), false;
+		return send_error("ERR_NEEDMOREPARAMS", "MODE"), false; // ERR_NEEDMOREPARAMS
 	deq.pop_front();
 	if (ch.find(deq.front()) == ch.end())
 		return send_error("ERR_NOSUCHCHANNEL"), false;
@@ -98,7 +98,7 @@ bool	client::cmd_MODE(std::deque<std::string>& deq, std::map<int, client>& cl, s
 		else if (modes[i].second == 'o')
 		{
 			if (deq.empty())
-				send_error("ERR_NEEDMOREPARAMS");
+				send_error("ERR_NEEDMOREPARAMS", "MODE"); // ERR_NEEDMOREPARAMS
 			else
 			{
 				if ((it = mapFind(cl, deq.front())) == cl.end()) // if client exists

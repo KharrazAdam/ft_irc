@@ -85,8 +85,8 @@ public:
 
 	
 	// <-----errors--------->
-	
-	void	send_error(const char *) const;
+	void	send_error(string str, string cmd) const;
+	void	send_error(string str) const;
 	void	send_message(string str) const;
 	void	RPL_WELCOME(void);
 };
