@@ -27,26 +27,26 @@ bool	client::msgCl(std::map<int, client>& cl, std::string& message, std::string&
 			break ;
 	}
 	if (it == cl.end())
-		return send_error("ERR_NOSUCHNICK"), false;
+		return send_error("ERR_NOSUCHNICK"), false; // ERR_NOSUCHNICK // done
 	else if (!print_pvmsg((*it).second.getFd(), message, receiver, false))
-		return send_error("ERR_SYSCALL_SEND"), false;
+		return send_message("ERR_SYSCALL_SEND"), false; // ERR_SYSCALL_SEND // done
 	return true;
 }
 
 bool	client::msgCh(std::map<std::string, Channel>& ch, std::string& message, std::string& receiver)
 {
 	if (ch.find(receiver) == ch.end())
-		return send_error("ERR_NOSUCHCHANNEL"), false;
+		return send_error("ERR_NOSUCHCHANNEL" , receiver), false; // ERR_NOSUCHCHANNEL // done
 	else
 	{
 		if (ch[receiver].vecFind(ch[receiver].users, *this) == ch[receiver].users.end()) /// not a cmember
-			return send_error("ERR_CANNOTSENDTOCHAN"), false;
+			return send_error("ERR_CANNOTSENDTOCHAN" , receiver), false; // ERR_CANNOTSENDTOCHAN // done
 		for (size_t j = 0; j < ch[receiver].users.size(); j++)
 		{
 			if ((*this).getNick() == ch[receiver].users[j]->getNick())
 				continue ;
 			if (!print_pvmsg(ch[receiver].users[j]->getFd(), message, receiver, true))
-				send_error("ERR_SYSCALL_SEND");
+				send_error("ERR_NOSUCHCHANNEL" , receiver); // DONE
 		}
 	}
 	return true;
@@ -59,7 +59,7 @@ bool	client::cmd_PRIVMSG(std::deque<std::string>& deq, std::map<int, client>& cl
 
 
 	if (deq.size() < 3)
-		return send_error(":irc.example.com 433 * ben :Nickname is already in use"), false; // ERR_NOTEXTTOSEND
+		return send_error("ERR_NOTEXTTOSEND"), false; // ERR_NOTEXTTOSEND 		// Done
 	com_sep(deq, receivers);
 	deq.pop_front();
 	while (true)

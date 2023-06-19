@@ -228,7 +228,7 @@ bool	ircserv::ircserv_receiv(pollfd& Ps, int *num)
 		return user[Ps.fd].cmd_INVITE(deq, user, channels);
 	else if (deq.front() == "TOPIC")
 		return user[Ps.fd].cmd_TOPIC(deq, channels);
-	else if (deq.front() == "/USMELL")
+	else if (deq.front() == "USMELL")
 		return user[Ps.fd].cmd_USMELL(deq, user);
 	return true;
 }

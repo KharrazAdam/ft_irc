@@ -132,7 +132,7 @@ bool	client::cmd_USER(std::deque<std::string>& deq)
 	// if (deq.size() < 5)
 	// 	return send_error("ERR_NEEDMOREPARAMS", "USER"), false; // ERR_NEEDMOREPARAMS   // done !
 	// if (deq[4][0] != ':')
-	// 	return send_error("ERROR SYNTAX"), false; // ERR_chars
+	// 	return send_message("ERROR SYNTAX"), false; // ERR_chars
 	// deq.pop_front();
 	// username = deq.front();
 	// for (size_t i = 0; i < 3; i++)
@@ -186,6 +186,9 @@ void	client::send_error(string str) const
 	else if (str == "ERR_NOSUCHCATEGORY") {
 		send_message(::string(":startimes42 479 * :No such category (available categories : bath, feet and armpit)\r\n"));
 	}
+	else if (str == "ERR_NOTEXTTOSEND") {
+		send_message(::string(":startimes42 412 * :No text to send\r\n"));
+	}
 
 }
 
@@ -217,6 +220,18 @@ void	client::send_error(string err , string cmd) const
 	}
 	else if (err == "ERR_USERONCHANNEL") {
 		send_message(::string(":startimes42 443 * "+nickname+" "+ cmd +" :is already on channel\r\n"));
+	}
+	else if (err == "ERR_CANNOTSENDTOCHAN") {
+		send_message(::string(":startimes42 404 * "+nickname+" "+ cmd +" :Cannot send to channel\r\n"));
+	}
+	else if (err == "ERR_BADCHANMASK") {
+		send_message(::string(":startimes42 476 * "+nickname+" "+ cmd +" :Bad Channel Mask\r\n"));
+	}
+	else if (err == "ERR_BADCHANNELKEY") {
+		send_message(::string(":startimes42 475 * "+nickname+" "+ cmd +" :Cannot join channel (+k) - bad key\r\n"));
+	}
+	else if ( err == "ERR_UNKNOWNMODE") {
+		send_message(::string(":startimes42 472 * "+nickname+" "+ cmd +" :is unknown mode char to me\r\n"));
 	}
 }
 
