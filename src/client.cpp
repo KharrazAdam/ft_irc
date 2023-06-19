@@ -296,11 +296,11 @@ string client::getMessage(string category)
 {
 	string message;
 	if (category == "bath")
-		message = "You have been pinged, you need to take a shower.";
+		message = "You have been pinged, you need to take a shower.\r\n";
 	else if (category == "feet")
-		message = "You have been pinged, your feet smell.";
+		message = "You have been pinged, your feet smell.\r\n";
 	else if (category == "armpit")
-		message = "You have been pinged, your armpits smell.";
+		message = "You have been pinged, your armpits smell.\r\n";
 	else
 		return "";
 	return message;
@@ -324,7 +324,7 @@ bool client::cmd_USMELL(std::deque<std::string> & deq, std::map<int, client>& us
 	msg = getMessage(category);
 	if (msg != "")
 	{
-		msg = "Emet: " + msg;
+		msg = ":Emet: PRIVMSG " + nick + " :" + msg;
 		user->send_message(msg.c_str());
 		return true;
 	}
