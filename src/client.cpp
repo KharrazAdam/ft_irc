@@ -121,26 +121,25 @@ bool	client::cmd_NICK(std::deque<std::string>& deq, std::map<int, client>& cl)
 
 bool	client::cmd_USER(std::deque<std::string>& deq)
 {
-	(void)deq;	
-	// if (auth & AUTHENTIFICATED)
-	// 	return send_error("ERR_ALREADYREGISTRED"), false; // ERR_ALREADYREGISTRED
-	// if (deq.size() < 5)
-	// 	return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
-	// if (deq[4][0] != ':')
-	// 	return send_error("ERROR SYNTAX"), false; // ERR_chars
-	// deq.pop_front();
-	// username = deq.front();
-	// for (size_t i = 0; i < 3; i++)
-	// 	deq.pop_front();
-	// deq.front().erase(deq.front().begin());
-	// while (1)
-	// {
-	// 	realname += deq.front();
-	// 	deq.pop_front();
-	// 	if (deq.empty() == true)
-	// 		break ;
-	// 	realname += " ";
-	// }
+	if (auth & AUTHENTIFICATED)
+		return send_error("ERR_ALREADYREGISTRED"), false; // ERR_ALREADYREGISTRED
+	if (deq.size() < 5)
+		return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
+	if (deq[4][0] != ':')
+		return send_error("ERROR SYNTAX"), false; // ERR_chars
+	deq.pop_front();
+	username = deq.front();
+	for (size_t i = 0; i < 3; i++)
+		deq.pop_front();
+	deq.front().erase(deq.front().begin());
+	while (1)
+	{
+		realname += deq.front();
+		deq.pop_front();
+		if (deq.empty() == true)
+			break ;
+		realname += " ";
+	}
 	auth |= USERNAME;
 	if ((auth & NICKNAME))
 	{
@@ -159,16 +158,6 @@ void	client::send_message(const char* er) const
 	str += er;
 	if (send(fd, str.c_str(), str.size() + 1, 0) == -1)
 		send_message(er);
-}
-
-void	client::sendUknownMessage(const char* msg) const
-{
-		std::string str;
-
-	str.clear();
-	str.append("MESSAGE ") += nickname + " " + msg;
-	if (send(fd, str.append("\n").c_str(), str.size() + 1, 0) == -1)
-		send_message(msg);
 }
 
 void	client::send_error(const char* er) const
@@ -314,14 +303,18 @@ string client::getMessage(string category)
 		message = "You have been pinged, your feet smell.";
 	else if (category == "armpit")
 		message = "You have been pinged, your armpits smell.";
+	else
+		return "";
 	return message;
 }
 
+// send an anonymous message to a user with the name of the bot (Emet)
 bool client::cmd_USMELL(std::deque<std::string> & deq, std::map<int, client>& users)
 {
-	std::string	nick;
-	std::string	category;
-	client		*user;
+	string	nick;
+	string	category;
+	client	*user;
+	string 	msg;
 
 	if (deq.size() < 3)
 		return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
@@ -330,6 +323,14 @@ bool client::cmd_USMELL(std::deque<std::string> & deq, std::map<int, client>& us
 	if (mapFind(users, nick) == users.end())
 		return send_error("ERR_NOSUCHNICK"), false; // ERR_NOSUCHNICK
 	user = &(*mapFind(users, nick)).second;
-	user->send_message(getMessage(category).c_str());
-	return true;
+	msg = getMessage(category);
+	if (msg != "")
+	{
+		msg = "Emet: " + msg;
+		user->send_message(msg.c_str());
+		return true;
+	}
+	else
+		return send_error("ERR_NOSUCHCATEGORY"), false; // ERR_NOSUCHCATEGORY
+
 }
