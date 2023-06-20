@@ -164,7 +164,6 @@ void	nl_sep(std::vector<std::string>& vec, std::string& str)
 char	ircserv::ircserv_auth(pollfd& Ps, std::string& str)
 {
 	size_t i = 0;
-	// int nw = countNewlines(str);
 	std::deque<std::string> deq;
 	std::vector<std::string> vec;
 	nl_sep(vec, str);
@@ -212,7 +211,8 @@ bool	ircserv::ircserv_receiv(pollfd& Ps, int *num)
 		return false;
 	if (ircserv_cmd(deq, str) == false)
 		return false;
-	ircserv_auth(Ps, str);
+	if (ircserv_auth(Ps, str) == false)
+		return false;
 	deq[0] = makeUppercase(deq.front());
 	if ((user[Ps.fd].ShowAuth() & AUTHENTIFICATED) == 0)
 		return false;
