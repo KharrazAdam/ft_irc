@@ -120,6 +120,7 @@ bool	ircserv::ircserv_msg(pollfd& Ps, string& str, int *num)
 		return false;
 	}
 	str.append(buffer, rs);
+	cout << "|" << str << "|" << endl;
 	return (true);
 }
 

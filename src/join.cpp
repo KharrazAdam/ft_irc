@@ -25,6 +25,7 @@ bool	client::cmd_JOIN(std::deque<std::string>& deq, std::map<std::string, Channe
 	{
 		if (titles[i][0] != '#')
 		{
+			cout << "ERR_BADCHANMASK <<<<<<" << endl;
 			send_error("ERR_BADCHANMASK", titles[i]); // ERR_BADCHANMASK // Done
 			continue ;
 		}
@@ -38,5 +39,15 @@ bool	client::cmd_JOIN(std::deque<std::string>& deq, std::map<std::string, Channe
 		else	
 			send_error("ERR_BADCHANNELKEY", titles[i]); // ERR_BADCHANNELKEY // Done 
 	}
+	// show all channels
+	cout << "Channels: " << endl;
+	for (std::map<std::string, Channel>::iterator it = channels.begin(); it != channels.end(); it++)
+	{
+		cout << "> " << (*it).first << "{ ";
+		for (size_t i = 0; i < (*it).second.users.size(); i++)
+			cout << (*it).second.users[i]->getNick() << " ";
+		cout << " } <" << endl;
+	}
+	
 	return true;
 }
