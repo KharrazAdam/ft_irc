@@ -87,8 +87,13 @@ public:
 	// <-----errors--------->
 	void	send_error(string str, string cmd) const;
 	void	send_error(string str) const;
-	void	send_message(string str) const;
+	bool	send_message(string str) const;
 	void	RPL_WELCOME(void);
+
+	bool	print_notice(int fd, std::string& message, std::string& receiver, bool isChannel);
+	bool	notice_msg_cl(std::map<int, client>& cl, std::string& message, std::string& receiver);
+	bool	notice_msg_ch(std::map<std::string, Channel>& ch, std::string& message, std::string& receiver);
+
 };
 #include "channel.hpp"
 #endif
