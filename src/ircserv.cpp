@@ -106,7 +106,17 @@ bool	ircserv::ircserv_msg(pollfd& Ps, string& str, int *num)
 	
 	str.clear();
 	bzero(buffer, 1024);
-	rs = recv(Ps.fd, buffer, 1024, 0);
+	while (1)
+    {
+        rs = recv(Ps.fd, buffer, 1024, 0);
+        if (rs == -1 || rs == 0)
+            break ;
+        str.append(buffer, rs);
+        if (str.find("\n") == ::string::npos)
+            continue ;
+        else
+            break;
+    }
 	if (rs == -1)
 		return cerr << "Error: recv()" << endl, false;
 	if (rs == 0)
@@ -119,7 +129,6 @@ bool	ircserv::ircserv_msg(pollfd& Ps, string& str, int *num)
 		Ps.fd = -1;
 		return false;
 	}
-	str.append(buffer, rs);
 	cout << "|" << str << "|" << endl;
 	return (true);
 }
