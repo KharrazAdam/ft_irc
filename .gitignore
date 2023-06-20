@@ -2,4 +2,6 @@ obm
 a.out
 obj
 IBM_server.c
-bin/ircserv
+ircserv
+ircserv.o
+.DS_Store
