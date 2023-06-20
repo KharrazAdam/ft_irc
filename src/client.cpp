@@ -149,7 +149,7 @@ void	client::send_error(string err , string cmd) const
 		send_message(::string(":startimes42 404 * "+nickname+" "+ cmd +" :Cannot send to channel\r\n"));
 	}
 	else if (err == "ERR_BADCHANMASK") {
-		send_message(::string(":startimes42 476 * "+cmd + " :Bad Channel Mask\r\n"));
+		send_message(::string(":startimes42 476 * "+nickname+" "+ cmd +" :Invalid Channel Mask\r\n"));
 	}
 	else if (err == "ERR_BADCHANNELKEY") {
 		send_message(::string(":startimes42 475 * "+nickname+" "+ cmd +" :Cannot join channel (+k) - bad key\r\n"));

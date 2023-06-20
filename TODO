@@ -1,33 +1,32 @@
-- channel name should be preceded with '#'
-- delete the channel when there is no user left on it
+## channel name should be preceded with '#' //Done
+## delete the channel when there is no user left on it //Done
+## before any command on channels ERR_NOTONCHANNEL 
 
-- before any command on channels ERR_NOTONCHANNEL
-
-- ## MAKEFILE
-     error when making in the first time
-- ## AUTH
-     # check if the user is already registered
-     # check if the user is already connected
-     # handle errors messages format
-- ## private messages (PRIVMSG)
+- # MAKEFILE
+     ## error when making in the first time
+- # AUTH
+     - check if the user is already registered
+     - check if the user is already connected
+     - handle errors messages format
+- # private messages (PRIVMSG)
      # file transfer
-- ## JOIN
-     # handle errors messages format
-     # should be added before the channel name
-- ## KICK
-     # handle errors messages format
-     # send a message to the kicked user
-     # send a message to the channel
-- ## NICK
-     # handle errors messages format
-- ## INVITE
-     # handle errors messages format
-     # send a message to the invited user
-     # send a message to the channel
-- ## MODE
-     # handle errors messages format
-- ## TOPIC
-     # handle errors messages format
-     # send a message to the channel (to be verified)
+- # JOIN
+     - handle errors messages format
+     - should be added before the channel name
+- # KICK
+     - handle errors messages format
+     - send a message to the kicked user
+     - send a message to the channel
+- # NICK
+     - handle errors messages format
+- # INVITE
+     - handle errors messages format
+     - send a message to the invited user
+     - send a message to the channel
+- # MODE
+     - handle errors messages format
+- # TOPIC
+     - handle errors messages format
+     - send a message to the channel (to be verified)
 
-- ## replace localhost with the real hostname
+- # replace localhost with the real hostname
