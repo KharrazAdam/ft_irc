@@ -297,9 +297,13 @@ bool client::cmd_KICK(std::deque<std::string>& deq, std::map<std::string,Channel
 		return send_error("ERR_CHANOPRIVSNEEDED", chan), false; // ERR_CHANOPRIVSNEEDED    // done !
 	for (size_t i = 0; i < nicks.size(); i++)
 	{
-		send_message(::string(":"+nickname + "!"+username +"@startimes42 KICK "+ chan + " alice :" + nicks[i] + "\r\n")); //
 		if (channel->kickUser(nicks[i], *this))
+		{
+			if (channel->vecFind(channel->mods, *this) != channel->mods.end())
+				channel->mods.erase(channel->vecFind(channel->mods, *this));
+			send_message(::string(":") + nickname + "!" + username + "@localhost" + " KICK " + chan + " " + nicks[i] + "\r\n");
 			continue;
+		}
 	}
 	if (channel->users.empty())
 		channels.erase(chan);
@@ -322,6 +326,7 @@ bool client::cmd_TOPIC(std::deque<std::string> & deq, std::map<std::string, Chan
 	if (channels[chan].isActive('t') && !channels[chan].isMod(*this)) // done !
 		return send_error("ERR_CHANOPRIVSNEEDED", chan), false; // ERR_CHANOPRIVSNEEDED // done !
 	channels[chan].setTopic(topic, *this);
+	send_message(":"+nickname + "!"+username +"@startimes42 TOPIC "+ chan + " :" + topic + "\r\n");
 	return true;
 }
 
@@ -331,8 +336,8 @@ bool client::cmd_INVITE(std::deque<std::string> & deq, std::map<int, client>& us
 	std::string	nick;
 	if (deq.size() < 3)
 		return send_error("ERR_NEEDMOREPARAMS", "INVITE"), false; // ERR_NEEDMOREPARAMS // done !
-	chan = deq[1];
-	nick = deq[2];
+	chan = deq[2];
+	nick = deq[1];
 	if (channels.find(chan) == channels.end())
 		return send_error("ERR_NOSUCHCHANNEL"), false; // ERR_NOSUCHCHANNEL // done !
 	if (channels[chan].vecFind(channels[chan].users, *this) == channels[chan].users.end())
@@ -340,7 +345,7 @@ bool client::cmd_INVITE(std::deque<std::string> & deq, std::map<int, client>& us
 	if (channels[chan].isActive('i') && !channels[chan].isMod(*this))
 		return send_error("ERR_CHANOPRIVSNEEDED"), false; // ERR_CHANOPRIVSNEEDED	// done !
 	if (channels[chan].vecFind(channels[chan].users, nick) != channels[chan].users.end())
-		return send_error("ERR_USERONCHANNEL"), false; // ERR_USERONCHANNEL // done 
+		return send_error("ERR_USERONCHANNEL", nick), false; // ERR_USERONCHANNEL // done !
 	// if (channels[chan].vecFind(channels[chan].users, nick) != channels[chan].users.end())
 	if (mapFind(users, nick) != users.end())
 	{
