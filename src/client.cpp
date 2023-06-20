@@ -245,11 +245,11 @@ bool client::cmd_INVITE(std::deque<std::string> & deq, std::map<int, client>& us
 	chan = deq[2];
 	nick = deq[1];
 	if (channels.find(chan) == channels.end())
-		return send_error("ERR_NOSUCHCHANNEL"), false; // ERR_NOSUCHCHANNEL // done !
+		return send_error("ERR_NOSUCHCHANNEL", chan), false; // ERR_NOSUCHCHANNEL // done !
 	if (channels[chan].vecFind(channels[chan].users, *this) == channels[chan].users.end())
 		return send_error("ERR_NOTONCHANNEL"), false; // ERR_NOTONCHANNEL // done !
 	if (channels[chan].isActive('i') && !channels[chan].isMod(*this))
-		return send_error("ERR_CHANOPRIVSNEEDED"), false; // ERR_CHANOPRIVSNEEDED	// done !
+		return send_error("ERR_CHANOPRIVSNEEDED", chan), false; // ERR_CHANOPRIVSNEEDED	// done !
 	if (channels[chan].vecFind(channels[chan].users, nick) != channels[chan].users.end())
 		return send_error("ERR_USERONCHANNEL", nick), false; // ERR_USERONCHANNEL // done !
 	// if (channels[chan].vecFind(channels[chan].users, nick) != channels[chan].users.end())
