@@ -340,10 +340,13 @@ bool client::cmd_INVITE(std::deque<std::string> & deq, std::map<int, client>& us
 	if (channels[chan].isActive('i') && !channels[chan].isMod(*this))
 		return send_error("ERR_CHANOPRIVSNEEDED"), false; // ERR_CHANOPRIVSNEEDED	// done !
 	if (channels[chan].vecFind(channels[chan].users, nick) != channels[chan].users.end())
-		return send_error("ERR_USERONCHANNEL"), false; // ERR_USERONCHANNEL // done !
+		return send_error("ERR_USERONCHANNEL"), false; // ERR_USERONCHANNEL // done 
 	// if (channels[chan].vecFind(channels[chan].users, nick) != channels[chan].users.end())
 	if (mapFind(users, nick) != users.end())
+	{
 		channels[chan].inviteUser((*mapFind(users, nick)).second);
+		(*mapFind(users, nick)).second.send_message(":" + nickname + "!"+username+"@startimes42 INVITE " + nick + " " + chan + "\r\n");
+	}
 	else
 		return send_error("ERR_NOSUCHNICK"), false; // ERR_NOSUCHNICK // done !
 	return true;
