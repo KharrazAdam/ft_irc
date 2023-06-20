@@ -81,10 +81,13 @@ int	client::getFd(void)
 // COMMANDS
 
 
-void	client::send_message(string str) const
+bool	client::send_message(string str) const
 {
-	if (send(fd, str.c_str(), str.size() + 1, 0) == -1)
-			send_message(str);
+	if (send(fd, str.c_str(), str.size() + 1, 0) == -1) {
+		cerr << "Error: send" << endl;
+		return false;
+	}
+	return true;
 }
 
 void	client::send_error(string str) const

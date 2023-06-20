@@ -2,13 +2,12 @@
 
 bool	client::cmd_USER(std::deque<std::string>& deq)
 {
-	(void)deq;
 	if (auth & AUTHENTIFICATED)
-		return send_error("ERR_ALREADYREGISTRED"), false; // ERR_ALREADYREGISTRED
+		return send_error("ERR_ALREADYREGISTERED"), false; // ERR_ALREADYREGISTRED // done
 	if (deq.size() < 5)
-		return send_error("ERR_NEEDMOREPARAMS"), false; // ERR_NEEDMOREPARAMS
+		return send_error("ERR_NEEDMOREPARAMS", "USER"), false; // ERR_NEEDMOREPARAMS // done
 	if (deq[4][0] != ':')
-		return send_error("ERROR SYNTAX"), false; // ERR_chars
+		return send_error("ERR_NEEDMOREPARAMS", "USER"), false; // ERR_NEEDMOREPARAMS // done
 	deq.pop_front();
 	username = deq.front();
 	for (size_t i = 0; i < 3; i++)
