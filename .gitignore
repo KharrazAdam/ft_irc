@@ -5,3 +5,4 @@ IBM_server.c
 ircserv
 ircserv.o
 .DS_Store
+*.o
