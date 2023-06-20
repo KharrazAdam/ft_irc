@@ -17,6 +17,7 @@
      - handle errors messages format
      - send a message to the kicked user
      - send a message to the channel
+     - send err msg to the kicked user
 - # NICK
      - handle errors messages format
 - # INVITE
@@ -25,8 +26,12 @@
      - send a message to the channel
 - # MODE
      - handle errors messages format
+     - check for +o msg
 - # TOPIC
      - handle errors messages format
      - send a message to the channel (to be verified)
 
 - # replace localhost with the real hostname
+
+- # invite
+     - error msg
