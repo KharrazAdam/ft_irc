@@ -164,7 +164,6 @@ void	nl_sep(std::vector<std::string>& vec, std::string& str)
 char	ircserv::ircserv_auth(pollfd& Ps, std::string& str)
 {
 	size_t i = 0;
-	// int nw = countNewlines(str);
 	std::deque<std::string> deq;
 	std::vector<std::string> vec;
 	nl_sep(vec, str);
@@ -177,16 +176,25 @@ char	ircserv::ircserv_auth(pollfd& Ps, std::string& str)
 		ircserv_cmd(deq, line);	
 		deq[0] = makeUppercase(deq.front());
 		if (deq.front() == "PASS")
-			user[Ps.fd].cmd_PASS(deq, password);	
+		{
+			if (user[Ps.fd].cmd_PASS(deq, password) == false)
+				return false;
+		}
 		if ((user[Ps.fd].ShowAuth() & PASSWORD) == 0)
 		{
 			i = 0;
 			break ;
 		}
 		if (deq.front() == "NICK")
-			user[Ps.fd].cmd_NICK(deq, user);
+		{
+			if (user[Ps.fd].cmd_NICK(deq, user) == false)
+				return false;
+		}
 		if (deq.front() == "USER")
-			user[Ps.fd].cmd_USER(deq);
+		{
+			if (user[Ps.fd].cmd_USER(deq) == false)
+				return false;
+		}
 		i++;
 	}
 	if (i == 0)
@@ -203,7 +211,8 @@ bool	ircserv::ircserv_receiv(pollfd& Ps, int *num)
 		return false;
 	if (ircserv_cmd(deq, str) == false)
 		return false;
-	ircserv_auth(Ps, str);
+	if (ircserv_auth(Ps, str) == false)
+		return false;
 	deq[0] = makeUppercase(deq.front());
 	if ((user[Ps.fd].ShowAuth() & AUTHENTIFICATED) == 0)
 		return false;

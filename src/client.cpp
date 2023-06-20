@@ -79,81 +79,6 @@ int	client::getFd(void)
 }
 
 // COMMANDS
-/**
- * @note please recode this function in a clean way
-*/
-bool	client::cmd_PASS(std::deque<std::string>& deq, std::string& pass)
-{
-	if (auth & PASSWORD)
-		return send_error("ERR_ALREADYREGISTERED"), true; // ERR_ALREADYREGISTERED  // done !
-	if (deq.size() == 1)
-		return send_error("ERR_NEEDMOREPARAMS", "PASS"), false; // ERR_NEEDMOREPARAMS  // done !
-	deq.pop_front();
-	// if (deq.size() > 1 || deq.front().compare(pass) != 0)
-	// 	return send_error("ERR_PASSWDMISMATCH"), false; // ERR_PASSWDMISMATCH // done !
-	(void)pass;
-	return auth |= PASSWORD, true;
-}
-
-/**
- * @note please recode this function in a clean way
-*/
-bool	client::cmd_NICK(std::deque<std::string>& deq, std::map<int, client>& cl)
-{
-	std::map<int, client>::iterator it = cl.begin();
-
-	if (deq.size() == 1)
-		return send_error("ERR_NONICKNAMEGIVEN"), false; // ERR_NONICKNAMEGIVEN  // done !
-	deq.pop_front();
-	if (deq.size() > 1 || deq.front().size() < 3 || deq.front()[0] == '#' || deq.front()[0] == ':' || deq.front().substr(0, 2) == "#&" || deq.front().substr(0, 2) == "&#")
-		return send_error("ERR_ERRONEUSNICKNAME"), false; // ERR_ERRONEUSNICKNAME  // done !
-	while (it != cl.end())
-	{
-		if ((*it).second.nickname == deq.front())
-			return send_message(::string(":startimes42 433 * "+deq.front()+" is already in use.\r\n")), false; // ERR_NICKNAMEINUSE	
-		it++;
-	}
-	nickname = deq.front();
-	auth |= NICKNAME;
-	if ((auth & USERNAME))
-	{
-		auth |= AUTHENTIFICATED;
-		RPL_WELCOME(); // send welcome
-	}
-	//return send_message("NICK NAME DONE"), true;
-	return true;
-}
-
-bool	client::cmd_USER(std::deque<std::string>& deq)
-{
-	(void)deq;
-	// if (auth & AUTHENTIFICATED)
-	// 	return send_error("ERR_ALREADYREGISTERED"), false; // ERR_ALREADYREGISTERED   // done !
-	// if (deq.size() < 5)
-	// 	return send_error("ERR_NEEDMOREPARAMS", "USER"), false; // ERR_NEEDMOREPARAMS   // done !
-	// if (deq[4][0] != ':')
-	// 	return send_message("ERROR SYNTAX"), false; // ERR_chars
-	// deq.pop_front();
-	// username = deq.front();
-	// for (size_t i = 0; i < 3; i++)
-	// 	deq.pop_front();
-	// deq.front().erase(deq.front().begin());
-	// while (1)
-	// {
-	// 	realname += deq.front();
-	// 	deq.pop_front();
-	// 	if (deq.empty() == true)
-	// 		break ;
-	// 	realname += " ";
-	// }
-	auth |= USERNAME;
-	if ((auth & NICKNAME))
-	{
-		auth |= AUTHENTIFICATED;
-		RPL_WELCOME(); // send welcome
-	}
-	return true;
-}
 
 
 void	client::send_message(string str) const
@@ -236,35 +161,13 @@ void	client::send_error(string err , string cmd) const
 
 void	client::RPL_WELCOME(void)
 {
-	/* e1r11p2.1337.ma 001 a :Welcome to the Internet Relay Network a!~a@127.0.0.1
-	:e1r11p2.1337.ma 002 a :Your host is e1r11p2.1337.ma, running version leet-irc 1.0.0
-	:e1r11p2.1337.ma 003 a :This server has been started Wed Oct 12 2022
-	:e1r11p2.1337.ma 004 a e1r11p2.1337.ma leet-irc 1.0.0 aioOrsw aovimntklbeI
-	:e1r11p2.1337.ma 251 a :There are 2 users and 0 services on 1 servers
-	:e1r11p2.1337.ma 375 a :- e1r11p2.1337.ma Message of the day -
-	:e1r11p2.1337.ma 376 a :End of MOTD command*/
-
-	// string msg = ":irc.example.com 001 " + nickname + " :Welcome to the Example IRC Network, " + nickname + "!" + username + "@localhost" + "\r\n";
-	// msg += ":irc.example.com 002 " + nickname + " :Your host is irc.example.com, running version 1.0\r\n";
-	// msg += ":irc.example.com 003 " + nickname + " :This server was created 22/03/2023\r\n";
-	// msg += ":irc.example.com 004 " + nickname + " irc.example.com 1.0 aovimntklbeI\r\n";
-	// msg += ":irc.example.com 251 " + nickname + " :There are 2 users and 0 services on 1 servers\r\n";
-	// msg += ":irc.example.com 375 " + nickname + " :- irc.example.com Message of the day -\r\n";
-	// msg += ":irc.example.com 372 " + nickname + " :- Welcome to the Example IRC Network, " + nickname + "!" + username + "@localhost" + "\r\n";
-	// msg += ":irc.example.com 376 " + nickname + " :End of /MOTD command.\r\n";
-	
-
-		std::string msg = ("::startimes42 001 " + nickname + " :welcome to :startimes42\r\n"
-			":startimes42 002 " + nickname + " :Your host is :startimes42, running version 1.0\r\n"
-			":startimes42 003 " + nickname + " :This server was created 22/03/2023\r\n"
-			":startimes42 004 " + nickname + " :startimes42 1.0 - -\r\n"
-			":startimes42 372 " + nickname + " welcome to :startimes42\r\n"
-			":startimes42 376 " + nickname + " :End of /MOTD command\r\n");
-
-	
-	//string msg = ":irc.example.com 001 " + nickname + " :Welcome to the Example IRC Network, " + nickname + "!" + username + "@localhost" + "\r\n";
-	send(fd, msg.c_str(), msg.size(), 0);
-	// send(fd, "<client> :Welcome to the <networkname> Network, <nick>[!<user>@<host>]\n",72, 0);
+	std::string msg = ("::startimes42 001 " + nickname + " :welcome to :startimes42\r\n"
+		":startimes42 002 " + nickname + " :Your host is :startimes42, running version 1.0\r\n"
+		":startimes42 003 " + nickname + " :This server was created 22/03/2023\r\n"
+		":startimes42 004 " + nickname + " :startimes42 1.0 - -\r\n"
+		":startimes42 372 " + nickname + " welcome to :startimes42\r\n"
+		":startimes42 376 " + nickname + " :End of /MOTD command\r\n");
+	send_message(msg);
 }
 
 void	client::com_sep(std::deque<std::string>& deq, std::vector<std::string>& vec)
