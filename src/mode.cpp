@@ -1,12 +1,5 @@
 #include "client.hpp"
 
-# define NEG 0
-# define POS 1
-# define I	 4
-# define T	 8
-# define K	 16
-# define O	 32
-
 	// · i: Set/remove Invite-only channel
 	// · t: Set/remove the restrictions of the TOPIC command to channel
 	// operators
