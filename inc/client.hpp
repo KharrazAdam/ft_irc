@@ -43,7 +43,8 @@ public:
 	int				ShowAuth(void);
 	std::string&		getNick(void);
 	std::string&		getUsername(void);
-
+	std::string&		getAddr(void);
+	void				setAddr(std::string);
 	int				getFd(void);
 	std::map<int, Client>::iterator	mapFind(std::map<int, Client>&, std::string&);
 	// <-----commands------->

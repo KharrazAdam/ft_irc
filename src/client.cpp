@@ -73,6 +73,16 @@ std::string&	Client::getUsername(void)
 	return username;
 }
 
+std::string &Client::getAddr(void)
+{
+	return addr;
+}
+
+void	Client::setAddr(std::string str)
+{
+	addr = str;
+}
+
 int	Client::getFd(void)
 {
 	return fd;

@@ -54,16 +54,17 @@ bool	ircserv::ircserv_port(const char *av, const char* pass)
  * @brief binds the socket to the provided port and the host's IP adress
  * @return false if binding faild. otherwise true
 */
-bool	ircserv::ircserv_bind(sockaddr_in6 *addr, int sock)
+bool	ircserv::ircserv_bind(sockaddr_in *addr, int sock)
 {
-	bzero(addr, sizeof(sockaddr_in6));
-	addr->sin6_family = AF_INET6;
-	addr->sin6_port = htons(port); // host to network short: if it's small endian converts it to big endian	
-	addr->sin6_len = sizeof(sockaddr_in6);
+	bzero(addr, sizeof(sockaddr_in));
+	addr->sin_family = AF_INET;
+	addr->sin_port = htons(port); // host to network short: if it's small endian converts it to big endian	
+	addr->sin_len = sizeof(sockaddr_in);
+	addr->sin_addr.s_addr = htonl(INADDR_ANY); // host to network long: if it's small endian converts it to big endian
 	int opt = 1;
 	if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
 		return cerr << "Error: setsockopt()" << endl, false;
-	if (bind(sock, (sockaddr *)addr, sizeof(sockaddr_in6)) == -1)
+	if (bind(sock, (sockaddr *)addr, sizeof(sockaddr_in)) == -1)
 		return cerr << "Error: bind()" << endl, false;
 	return (true);
 }
@@ -259,8 +260,10 @@ bool	ircserv::ircserv_receiv(pollfd& Ps, int *num)
 bool	ircserv::ircserv_connect(pollfd& Ps, int sock, int *num)
 {
 	int			client;
+	socklen_t	len = sizeof(Ps);
+	struct sockaddr_in addr;
 
-	client = accept(sock, NULL, NULL);
+	client = accept(sock, (struct sockaddr *)&addr, &len);
 	if (client == -1)
 		return cerr << "Error: accept()" << endl, false;
 	else
@@ -268,6 +271,7 @@ bool	ircserv::ircserv_connect(pollfd& Ps, int sock, int *num)
 		Ps.fd = client;
 		Ps.events = POLLIN;
 		user[Ps.fd] = ::Client(Ps.fd);
+		user[Ps.fd].setAddr(inet_ntoa(addr.sin_addr));
 		// user[Ps.fd](::client(Ps.fd));
 		(*num)++;
 	}
@@ -323,13 +327,14 @@ bool	ircserv::ircserv_serv(int sock)
 bool	ircserv::ircserv_run(void)
 {
 	int				sock;
-	sockaddr_in6	addr;
+	sockaddr_in		addr;
 
-	sock = socket(PF_INET6, SOCK_STREAM, 0);
+	sock = socket(PF_INET, SOCK_STREAM, 0);
 	if (sock == -1)
 		return cerr << "Error: socket()" << endl, false;
 	if (ircserv_bind(&addr, sock) == false)
 		return close(sock), false;
+	cout << "running on the address: " << inet_ntoa(addr.sin_addr) << endl;
 	if (listen(sock, SOMAXCONN) == -1)
 		return cerr << "Error: listen()" << endl, close(sock), false;	
 	if (ircserv_serv(sock) == false)

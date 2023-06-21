@@ -8,6 +8,7 @@
 # include <sys/socket.h>
 # include <poll.h>
 # include <netinet/in.h>
+# include <arpa/inet.h>
 
 # include <vector>
 # include <map>
@@ -34,7 +35,7 @@ private:
 	bool	is_num(std::string);
 	bool	ircserv_port(const char*, const char *);
 	bool	ircserv_run(void);
-	bool	ircserv_bind(sockaddr_in6 *addr, int sock);
+	bool	ircserv_bind(sockaddr_in *addr, int sock);
 	bool	ircserv_serv(int sock);
 	bool	ircserv_receiv(pollfd& Ps, int *num);
 	bool	ircserv_connect(pollfd& Ps, int sock, int *num);
