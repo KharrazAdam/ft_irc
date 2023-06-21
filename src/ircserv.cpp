@@ -60,7 +60,6 @@ bool	ircserv::ircserv_bind(sockaddr_in *addr, int sock)
 	addr->sin_family = AF_INET;
 	addr->sin_port = htons(port); // host to network short: if it's small endian converts it to big endian	
 	addr->sin_len = sizeof(sockaddr_in);
-	addr->sin_addr.s_addr = htonl(INADDR_ANY); // host to network long: if it's small endian converts it to big endian
 	int opt = 1;
 	if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
 		return cerr << "Error: setsockopt()" << endl, false;
@@ -260,10 +259,9 @@ bool	ircserv::ircserv_receiv(pollfd& Ps, int *num)
 bool	ircserv::ircserv_connect(pollfd& Ps, int sock, int *num)
 {
 	int			client;
-	socklen_t	len = sizeof(Ps);
 	struct sockaddr_in addr;
 
-	client = accept(sock, (struct sockaddr *)&addr, &len);
+	client = accept(sock, (struct sockaddr *)&addr, (socklen_t *)&addr);
 	if (client == -1)
 		return cerr << "Error: accept()" << endl, false;
 	else
