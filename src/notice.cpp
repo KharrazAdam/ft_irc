@@ -32,7 +32,7 @@ bool	Client::notice_msg_cl(std::map<int, Client>& cl, std::string& message, std:
 bool	Client::notice_msg_ch(std::map<std::string, Channel>& ch, std::string& message, std::string& receiver)
 {
 	if (ch.find(receiver) == ch.end())
-		return send_error("ERR_NOSUCHCHANNEL" , receiver), false; // ERR_NOSUCHCHANNEL // done
+		return false; // ERR_NOSUCHCHANNEL // done
 	else
 	{
 		if (ch[receiver].vecFind(ch[receiver].users, *this) == ch[receiver].users.end()) /// not a cmember

@@ -10,7 +10,7 @@ bool Client::print_pvmsg(int fd, std::string& message, std::string& receiver, bo
 	if (isChannel)
 		msg = ":" + nickname + "!"+nickname+"@" + "localhost" + " PRIVMSG " + receiver + " :" + message + "\r\n";
 	else
-		msg = ":" + nickname + " PRIVMSG " + receiver + " :" + message + "\r\n";
+		msg = ":" + nickname + "!"+nickname+"@" + "localhost" + " PRIVMSG " + receiver + " :" + message + "\r\n";
 	if (send(fd, msg.c_str(), msg.size(), 0) == -1)
 		return false;
 	return true;

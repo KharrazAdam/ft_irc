@@ -78,7 +78,7 @@ string get_mods(vector<Client *> &mods)
     {
         msg += mods[i]->getNick();
         if (i != mods.size() - 1)
-            msg += ", @";
+            msg += " @";
     }
     return msg;
 }
@@ -99,14 +99,24 @@ string Channel::join_msg_exi(string nickname,string username, string moders)
 	msg += ":startimes42 333 " + nickname + " " + this->title + " " + nickname + "!"+ username+"@localhost\r\n";
 	
 	std::vector<Client *>::iterator it;
-	
+	msg += ":startimes42 353 " + nickname + " = " + this->title + " :@";
 	for (it = mods.begin(); it != mods.end(); it++)
-		msg += ":startimes42 353 " + nickname + " = " + this->title + " :@" + (*it)->getNick() +"\r\n";
+	{
+		msg += (*it)->getNick();
+		if (it != mods.end() - 1)
+			msg += " @";
+	}
+	msg += " ";
 	for (it = users.begin(); it != users.end(); it++)
 	{
 		if ((this->vecFind(mods, (*it)->getNick()) == mods.end()))
-			msg += ":startimes42 353 " + nickname + " = " + this->title + " :" + (*it)->getNick() +"\r\n";
+		{
+			msg += (*it)->getNick();
+			if (it != users.end() - 1)
+				msg += " ";
+		}
 	}
+	msg += "\r\n";
 	msg += ":startimes42 366 " + nickname + " " + this->title + " :End of /NAMES list.\r\n";
 	(void)moders;
 	//inform members
