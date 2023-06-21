@@ -73,12 +73,12 @@ std::vector<Client *>::iterator	Channel::vecFind(std::vector<Client *>& vec, std
 
 string get_mods(vector<Client *> &mods)
 {
-    string msg = "";
+    string msg = "@";
     for (size_t i = 0; i < mods.size(); i++)
     {
         msg += mods[i]->getNick();
         if (i != mods.size() - 1)
-            msg += " ";
+            msg += ", @";
     }
     return msg;
 }
@@ -87,7 +87,7 @@ string Channel::join_msg(string nickname,string username, string moders)
 {
 	string msg = ":" + nickname + "!" + username + "@localhost JOIN " + this->title + "\r\n";
 	msg += ":startimes42 MODE o +o\r\n";
-	msg += ":startimes42 353 " + nickname + " = " + this->title + " :@"+ moders +"\r\n";
+	msg += ":startimes42 353 " + nickname + " = " + this->title + " :"+ moders +"\r\n";
 	msg += ":startimes42 366 " + nickname + " " + this->title + " :End of /NAMES list.\r\n";
 	return msg;
 }
@@ -97,9 +97,19 @@ string Channel::join_msg_exi(string nickname,string username, string moders)
 	string msg = ":" + nickname + "!" + username + "@localhost JOIN " + this->title + "\r\n";
 	msg += ":startimes42 332 " + nickname + " " + this->title + " :" + (this->topic.empty() ? "No topic is set" : this->topic) + "\r\n";
 	msg += ":startimes42 333 " + nickname + " " + this->title + " " + nickname + "!"+ username+"@localhost\r\n";
-	msg += ":startimes42 353 " + nickname + " = " + this->title + " :@" + moders +"\r\n";
+	
+	std::vector<Client *>::iterator it;
+	
+	for (it = mods.begin(); it != mods.end(); it++)
+		msg += ":startimes42 353 " + nickname + " = " + this->title + " :@" + (*it)->getNick() +"\r\n";
+	for (it = users.begin(); it != users.end(); it++)
+	{
+		if ((this->vecFind(mods, (*it)->getNick()) == mods.end()))
+			msg += ":startimes42 353 " + nickname + " = " + this->title + " :" + (*it)->getNick() +"\r\n";
+	}
 	msg += ":startimes42 366 " + nickname + " " + this->title + " :End of /NAMES list.\r\n";
-
+	msg += ":startimes42 366 " + nickname + " " + this->title + " :End of /NAMES list.\r\n";
+	(void)moders;
 	//inform members
 	return msg;
 }
