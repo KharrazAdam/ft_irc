@@ -125,8 +125,9 @@ bool	Channel::add_user(client &cl)
 	return true;
 }
 
-bool Channel::kickUser(std::string &nick, client &cl)
+bool Channel::kickUser(std::string &nick, client &cl, std::string &reason)
 {
+	client *tmp;
 	if (vecFind(users, cl) == users.end())
 	{
 		cl.send_error("ERR_NOTONCHANNEL", title); // done !
@@ -137,7 +138,9 @@ bool Channel::kickUser(std::string &nick, client &cl)
 		cl.send_error("ERR_USERNOTINCHANNEL", title); // done !
 		return false;
 	}
+	tmp = *vecFind(users, nick);
 	users.erase(vecFind(users, nick));
+	tmp->send_message(":" + cl.getNick() + "!" + cl.getUsername() + "@localhost KICK " + this->title + " " + nick + " :" + reason + "\r\n");
 	return true;
 }
 

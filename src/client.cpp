@@ -189,12 +189,27 @@ bool client::cmd_KICK(std::deque<std::string>& deq, std::map<std::string,Channel
 	std::string					chan;
 	std::vector<std::string>	nicks;
 	Channel						*channel;
+	string 						reason;
+	string 						msg;
 
 	if (deq.size() < 3)
 		return send_error("ERR_NEEDMOREPARAMS", "KICK"), false; // ERR_NEEDMOREPARAMS   // done !
 	chan = deq[1];
 	deq.pop_front();
 	com_sep(deq, nicks);
+	deq.pop_front();
+	while (!deq.empty())
+	{
+		reason.append(deq.front());
+		reason.erase(std::remove(reason.begin(), reason.end(), '\r'), reason.end());
+		deq.pop_front();
+		if (deq.empty() == true)
+			break ;
+		reason.append(" ");
+	}
+	if (reason.empty())
+		reason = "Kicked by " + nickname;
+
 	if (channels.find(chan) == channels.end())
 		return send_error("ERR_NOSUCHCHANNEL", chan), false; // ERR_NOSUCHCHANNEL    // done !
 	channel = &channels[chan];
@@ -203,11 +218,16 @@ bool client::cmd_KICK(std::deque<std::string>& deq, std::map<std::string,Channel
 		return send_error("ERR_CHANOPRIVSNEEDED", chan), false; // ERR_CHANOPRIVSNEEDED    // done !
 	for (size_t i = 0; i < nicks.size(); i++)
 	{
-		if (channel->kickUser(nicks[i], *this))
+		if (channel->kickUser(nicks[i], *this, reason))
 		{
-			if (channel->vecFind(channel->mods, *this) != channel->mods.end())
-				channel->mods.erase(channel->vecFind(channel->mods, *this));
-			send_message(::string(":") + nickname + "!" + username + "@localhost" + " KICK " + chan + " " + nicks[i] + "\r\n");
+			if (channel->vecFind(channel->mods, nicks[i]) != channel->mods.end())
+			{
+				channel->mods.erase(channel->vecFind(channel->mods, nicks[i]));
+			}
+			msg = ":startimes42 KICK " + chan + " " + nicks[i] + " :" + reason + "\r\n";
+			for (vector<client *>::iterator it = channel->users.begin(); it != channel->users.end(); it++)
+				(*it)->send_message(msg);
+			
 			continue;
 		}
 	}

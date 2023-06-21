@@ -39,7 +39,7 @@ public:
 	void	setKey(std::string);
 	std::vector<client *>::iterator	vecFind(std::vector<client *>&, client&);
 	std::vector<client *>::iterator	vecFind(std::vector<client *>&, std::string&);
-	bool							kickUser(std::string &nick, client &cl);
+	bool							kickUser(std::string &nick, client &cl, string &);
 	bool							isActive(const char &mode);
 	bool							setTopic(std::string &topic, client &cl);
 	bool							isMod(client &cl);
