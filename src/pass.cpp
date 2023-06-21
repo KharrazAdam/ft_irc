@@ -1,6 +1,6 @@
 #include "client.hpp"
 
-bool	client::cmd_PASS(std::deque<std::string>& deq, std::string& pass)
+bool	Client::cmd_PASS(std::deque<std::string>& deq, std::string& pass)
 {
 	if (auth & PASSWORD)
 		return send_error("ERR_ALREADYREGISTERED"), true; // ERR_ALREADYREGISTERED // done

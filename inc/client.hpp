@@ -20,7 +20,7 @@
 using namespace std;
 
 class Channel;
-class client
+class Client
 {
 private:
 	// <nick!user@host>
@@ -37,49 +37,49 @@ private:
 	void	SetUser(std::string);
 	void	SetNick(std::string);
 public:
-	client(int);
-	client();
-	~client();
+	Client(int);
+	Client();
+	~Client();
 	int				ShowAuth(void);
 	std::string&		getNick(void);
 	std::string&		getUsername(void);
 
 	int				getFd(void);
-	std::map<int, client>::iterator	mapFind(std::map<int, client>&, std::string&);
+	std::map<int, Client>::iterator	mapFind(std::map<int, Client>&, std::string&);
 	// <-----commands------->
 	bool	cmd_PASS(std::deque<std::string>&, std::string&);
 
-	bool	cmd_NICK(std::deque<std::string>&, std::map<int, client>& cl);
+	bool	cmd_NICK(std::deque<std::string>&, std::map<int, Client>& cl);
 
 	bool	cmd_USER(std::deque<std::string>&);
 
 	bool	cmd_JOIN(std::deque<std::string>&, std::map<std::string, Channel>&);
 	void	com_sep(std::deque<std::string>&, std::vector<std::string>&);
 
-	bool	cmd_NOTICE(std::deque<std::string>&, std::map<int, client>& cl, std::map<std::string, Channel>&);
-	bool	noticeCl(std::map<int, client>&, std::string&, std::string&);
+	bool	cmd_NOTICE(std::deque<std::string>&, std::map<int, Client>& cl, std::map<std::string, Channel>&);
+	bool	noticeCl(std::map<int, Client>&, std::string&, std::string&);
 	bool	noticeCh(std::map<std::string, Channel>&, std::string&, std::string&);
 
-	bool	cmd_PRIVMSG(std::deque<std::string>&, std::map<int, client>& cl, std::map<std::string, Channel>&);
-	bool	msgCl(std::map<int, client>&, std::string&, std::string&);
+	bool	cmd_PRIVMSG(std::deque<std::string>&, std::map<int, Client>& cl, std::map<std::string, Channel>&);
+	bool	msgCl(std::map<int, Client>&, std::string&, std::string&);
 	bool	msgCh(std::map<std::string, Channel>&, std::string&, std::string&);
 	bool	print_pvmsg(int fd, std::string& message, std::string& receiver,bool isChannel);
 
-	bool	cmd_MODE(std::deque<std::string>&, std::map<int, client>& cl, std::map<std::string, Channel>&);
+	bool	cmd_MODE(std::deque<std::string>&, std::map<int, Client>& cl, std::map<std::string, Channel>&);
 	void	flag_i(Channel&, bool);
 	void	flag_t(Channel&, bool);
 	void	flag_k(Channel&, bool, std::deque<std::string>&);
-	void	flag_o(Channel&, bool, client&);
-	void	flag_l(std::deque<std::string>&, bool);
+	void	flag_o(Channel&, bool, Client&);
+	void	flag_l(std::deque<std::string>&, bool, Channel&);
 	void	send_all(Channel&, string, char, bool);
 
 	bool	cmd_KICK(std::deque<std::string>&, std::map<std::string, Channel>&);
 
 	bool	cmd_TOPIC(std::deque<std::string>&, std::map<std::string, Channel>&);
 	
-	bool	cmd_INVITE(std::deque<std::string>&, std::map<int, client>&, std::map<std::string, Channel>&);
+	bool	cmd_INVITE(std::deque<std::string>&, std::map<int, Client>&, std::map<std::string, Channel>&);
 
-	bool	cmd_USMELL(std::deque<std::string>&, std::map<int, client>&);
+	bool	cmd_USMELL(std::deque<std::string>&, std::map<int, Client>&);
 	// ....
 	// bonus
 	bool	cmd_SHOW(std::deque<std::string>&, std::map<std::string, Channel>&);
@@ -93,7 +93,7 @@ public:
 	void	RPL_WELCOME(void);
 
 	bool	print_notice(int fd, std::string& message, std::string& receiver, bool isChannel);
-	bool	notice_msg_cl(std::map<int, client>& cl, std::string& message, std::string& receiver);
+	bool	notice_msg_cl(std::map<int, Client>& cl, std::string& message, std::string& receiver);
 	bool	notice_msg_ch(std::map<std::string, Channel>& ch, std::string& message, std::string& receiver);
 
 };

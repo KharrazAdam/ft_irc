@@ -263,7 +263,7 @@ bool	ircserv::ircserv_connect(pollfd& Ps, int sock, int *num)
 	{
 		Ps.fd = client;
 		Ps.events = POLLIN;
-		user[Ps.fd] = ::client(Ps.fd);
+		user[Ps.fd] = ::Client(Ps.fd);
 		// user[Ps.fd](::client(Ps.fd));
 		(*num)++;
 	}

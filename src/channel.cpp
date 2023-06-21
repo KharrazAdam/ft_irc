@@ -42,9 +42,14 @@ void	Channel::setKey(std::string str)
 	key = str;
 }
 
-std::vector<client *>::iterator	Channel::vecFind(std::vector<client *>& vec, client& cl)
+void Channel::set_l(int l)
 {
-	std::vector<client *>::iterator it;
+	this->l = l;
+}
+
+std::vector<Client *>::iterator	Channel::vecFind(std::vector<Client *>& vec, Client& cl)
+{
+	std::vector<Client *>::iterator it;
 
     for (it = vec.begin(); it != vec.end(); it++)
 	{
@@ -54,9 +59,9 @@ std::vector<client *>::iterator	Channel::vecFind(std::vector<client *>& vec, cli
 	return it;
 }
 
-std::vector<client *>::iterator	Channel::vecFind(std::vector<client *>& vec, std::string &nick)
+std::vector<Client *>::iterator	Channel::vecFind(std::vector<Client *>& vec, std::string &nick)
 {
-	std::vector<client *>::iterator it;
+	std::vector<Client *>::iterator it;
 
     for (it = vec.begin(); it != vec.end(); it++)
 	{
@@ -66,14 +71,14 @@ std::vector<client *>::iterator	Channel::vecFind(std::vector<client *>& vec, std
 	return it;
 }
 
-string get_mods(vector<client *> &mods)
+string get_mods(vector<Client *> &mods)
 {
     string msg = "";
     for (size_t i = 0; i < mods.size(); i++)
     {
         msg += mods[i]->getNick();
         if (i != mods.size() - 1)
-            msg += ",";
+            msg += " ";
     }
     return msg;
 }
@@ -107,9 +112,9 @@ void Channel::send_msg(string msg)
 	}
 }
 
-bool	Channel::add_user(client &cl)
+bool	Channel::add_user(Client &cl)
 {   
-	std::vector<client *>::iterator	it;
+	std::vector<Client *>::iterator	it;
 
 	if (vecFind(users, cl) != users.end())
 		return true;
@@ -137,9 +142,9 @@ bool	Channel::add_user(client &cl)
 	return true;
 }
 
-bool Channel::kickUser(std::string &nick, client &cl, std::string &reason)
+bool Channel::kickUser(std::string &nick, Client &cl, std::string &reason)
 {
-	client *tmp;
+	Client *tmp;
 	if (vecFind(users, cl) == users.end())
 	{
 		cl.send_error("ERR_NOTONCHANNEL", title); // done !
@@ -156,7 +161,7 @@ bool Channel::kickUser(std::string &nick, client &cl, std::string &reason)
 	return true;
 }
 
-bool Channel::setTopic(std::string &topic, client &cl)
+bool Channel::setTopic(std::string &topic, Client &cl)
 {
 	if (vecFind(users, cl) == users.end())
 	{
@@ -172,17 +177,17 @@ bool Channel::setTopic(std::string &topic, client &cl)
 	return true;
 }
 
-bool Channel::isMod(client &cl)
+bool Channel::isMod(Client &cl)
 {
 	return vecFind(mods, cl) != mods.end();
 }
 
-bool Channel::isUser(client &cl)
+bool Channel::isUser(Client &cl)
 {
 	return vecFind(users, cl) != users.end();
 }
 
-bool Channel::isInvited(client &cl)
+bool Channel::isInvited(Client &cl)
 {
 	return vecFind(invited, cl) != invited.end();
 }
@@ -198,7 +203,7 @@ bool Channel::isActive(const char &mode)
 	return true;
 }
 
-bool Channel::inviteUser(client &cl)
+bool Channel::inviteUser(Client &cl)
 {
 	if (isInvited(cl))
 		return true;

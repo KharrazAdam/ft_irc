@@ -10,9 +10,9 @@ bool	is_alpha_valid(std::string& str)
 	return true;
 }
 
-std::map<int, client>::iterator	client::mapFind(std::map<int, client>&map, std::string& nick)
+std::map<int, Client>::iterator	Client::mapFind(std::map<int, Client>&map, std::string& nick)
 {
-	std::map<int, client>::iterator it;
+	std::map<int, Client>::iterator it;
 
     for (it = map.begin(); it != map.end(); it++)
 	{
@@ -26,15 +26,15 @@ std::map<int, client>::iterator	client::mapFind(std::map<int, client>&map, std::
  * @name Deafault constructor
  * @brief set auth to false; auth will be changed to 'true' when client will insert correct password
 */
-client::client(int fds):fd(fds), auth(0), username(""), nickname(""), addr("nickname!user@host"){}
-client::client():auth(0), username(""), nickname(""), addr("nickname!user@host"){}
+Client::Client(int fds):fd(fds), auth(0), username(""), nickname(""), addr("nickname!user@host"){}
+Client::Client():auth(0), username(""), nickname(""), addr("nickname!user@host"){}
 
-client::~client(){}
+Client::~Client(){}
 
 /**
  * @brief change auth to 'status';
 */
-void	client::SetAuth(int status)
+void	Client::SetAuth(int status)
 {
 	this->auth |= status;
 }
@@ -42,7 +42,7 @@ void	client::SetAuth(int status)
 /**
  * @brief set nickname with the given string
 */
-void	client::SetNick(std::string str)
+void	Client::SetNick(std::string str)
 {
 	this->nickname = str;
 }
@@ -50,7 +50,7 @@ void	client::SetNick(std::string str)
 /**
  * @brief set username with the given string
 */
-void	client::SetUser(std::string str)
+void	Client::SetUser(std::string str)
 {
 	this->username = str;
 }
@@ -58,22 +58,22 @@ void	client::SetUser(std::string str)
 /**
  * @brief return the auth (either true or false)
 */
-int	client::ShowAuth(void)
+int	Client::ShowAuth(void)
 {
 	return auth;
 }
 
-std::string&	client::getNick(void)
+std::string&	Client::getNick(void)
 {
 	return nickname;
 }
 
-std::string&	client::getUsername(void)
+std::string&	Client::getUsername(void)
 {
 	return username;
 }
 
-int	client::getFd(void)
+int	Client::getFd(void)
 {
 	return fd;
 }
@@ -81,7 +81,7 @@ int	client::getFd(void)
 // COMMANDS
 
 
-bool	client::send_message(string str) const
+bool	Client::send_message(string str) const
 {
 	if (send(fd, str.c_str(), str.size() + 1, 0) == -1) {
 		cerr << "Error: send" << endl;
@@ -90,7 +90,7 @@ bool	client::send_message(string str) const
 	return true;
 }
 
-void	client::send_error(string str) const
+void	Client::send_error(string str) const
 {
 	if (str == "ERR_NOSUCHNICK") {
 		send_message(::string(":startimes42 401 * "+ nickname +" :No such nick/channel\r\n"));
@@ -119,7 +119,7 @@ void	client::send_error(string str) const
 
 }
 
-void	client::send_error(string err , string cmd) const
+void	Client::send_error(string err , string cmd) const
 {
 	if (err == "ERR_NEEDMOREPARAMS") {
 		send_message(::string(":startimes42 461 "+nickname+" "+ cmd +" :Not enough parameters\r\n"));
@@ -162,7 +162,7 @@ void	client::send_error(string err , string cmd) const
 	}
 }
 
-void	client::RPL_WELCOME(void)
+void	Client::RPL_WELCOME(void)
 {
 	std::string msg = ("::startimes42 001 " + nickname + " :welcome to :startimes42\r\n"
 		":startimes42 002 " + nickname + " :Your host is :startimes42, running version 1.0\r\n"
@@ -173,7 +173,7 @@ void	client::RPL_WELCOME(void)
 	send_message(msg);
 }
 
-void	client::com_sep(std::deque<std::string>& deq, std::vector<std::string>& vec)
+void	Client::com_sep(std::deque<std::string>& deq, std::vector<std::string>& vec)
 {
 	deq.pop_front();
 	if (deq.empty())
@@ -184,7 +184,7 @@ void	client::com_sep(std::deque<std::string>& deq, std::vector<std::string>& vec
         vec.push_back(str);
 }
 
-bool client::cmd_KICK(std::deque<std::string>& deq, std::map<std::string,Channel>& channels)
+bool Client::cmd_KICK(std::deque<std::string>& deq, std::map<std::string,Channel>& channels)
 {
 	std::string					chan;
 	std::vector<std::string>	nicks;
@@ -225,7 +225,7 @@ bool client::cmd_KICK(std::deque<std::string>& deq, std::map<std::string,Channel
 				channel->mods.erase(channel->vecFind(channel->mods, nicks[i]));
 			}
 			msg = ":startimes42 KICK " + chan + " " + nicks[i] + " :" + reason + "\r\n";
-			for (vector<client *>::iterator it = channel->users.begin(); it != channel->users.end(); it++)
+			for (vector<Client *>::iterator it = channel->users.begin(); it != channel->users.end(); it++)
 				(*it)->send_message(msg);
 			
 			continue;
@@ -236,7 +236,7 @@ bool client::cmd_KICK(std::deque<std::string>& deq, std::map<std::string,Channel
 	return true;
 }
 
-bool client::cmd_TOPIC(std::deque<std::string> & deq, std::map<std::string, Channel> & channels)
+bool Client::cmd_TOPIC(std::deque<std::string> & deq, std::map<std::string, Channel> & channels)
 {
 	std::string	chan;
 	std::string	topic;
@@ -256,7 +256,7 @@ bool client::cmd_TOPIC(std::deque<std::string> & deq, std::map<std::string, Chan
 	return true;
 }
 
-bool client::cmd_INVITE(std::deque<std::string> & deq, std::map<int, client>& users, std::map<std::string, Channel> & channels)
+bool Client::cmd_INVITE(std::deque<std::string> & deq, std::map<int, Client>& users, std::map<std::string, Channel> & channels)
 {
 	std::string	chan;
 	std::string	nick;
@@ -289,7 +289,7 @@ bool client::cmd_INVITE(std::deque<std::string> & deq, std::map<int, client>& us
 // 2- You have been pinged, you need to take a shower.
 // 3- You have been pinged, your armpits smell.
 
-string client::getMessage(string category)
+string Client::getMessage(string category)
 {
 	string message;
 	if (category == "bath")
@@ -304,11 +304,11 @@ string client::getMessage(string category)
 }
 
 // send an anonymous message to a user with the name of the bot (Emet)
-bool client::cmd_USMELL(std::deque<std::string> & deq, std::map<int, client>& users)
+bool Client::cmd_USMELL(std::deque<std::string> & deq, std::map<int, Client>& users)
 {
 	string	nick;
 	string	category;
-	client	*user;
+	Client	*user;
 	string 	msg;
 
 	if (deq.size() < 3)

@@ -1,7 +1,7 @@
 # include "client.hpp"
 # include "channel.hpp"
 
-bool	client::cmd_SHOW(std::deque<std::string>& deq, std::map<std::string, Channel>& chan)
+bool	Client::cmd_SHOW(std::deque<std::string>& deq, std::map<std::string, Channel>& chan)
 {
 	deq.pop_front();
 	
@@ -12,7 +12,7 @@ bool	client::cmd_SHOW(std::deque<std::string>& deq, std::map<std::string, Channe
 
 void	Channel::show_details()
 {
-	std::vector<client *>::iterator it = users.begin();
+	std::vector<Client *>::iterator it = users.begin();
 
 	std::cout << "title: " << title << std::endl;
 	std::cout << "topic: " << topic << std::endl;

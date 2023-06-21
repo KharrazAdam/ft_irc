@@ -26,10 +26,10 @@ class ircserv
 private:
 	int								port;
 	std::string						password;
-	std::map<int, client>			user;
+	std::map<int, Client>			user;
 	std::map<std::string, Channel>	channels;
 
-	std::vector<client>::iterator	vecFind(std::vector<client>&, int&);
+	std::vector<Client>::iterator	vecFind(std::vector<Client>&, int&);
 
 	bool	is_num(std::string);
 	bool	ircserv_port(const char*, const char *);

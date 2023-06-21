@@ -4,7 +4,7 @@
 //   :dan!~h@localhost PRIVMSG #coolpeople :Hi everyone!
 //                                   ; Message from dan to the channel
 //                                   #coolpeopl
-bool client::print_pvmsg(int fd, std::string& message, std::string& receiver, bool isChannel)
+bool Client::print_pvmsg(int fd, std::string& message, std::string& receiver, bool isChannel)
 {
 	string msg;
 	if (isChannel)
@@ -17,9 +17,9 @@ bool client::print_pvmsg(int fd, std::string& message, std::string& receiver, bo
 }
 
 
-bool	client::msgCl(std::map<int, client>& cl, std::string& message, std::string& receiver)
+bool	Client::msgCl(std::map<int, Client>& cl, std::string& message, std::string& receiver)
 {
-	std::map<int, client>::iterator it;
+	std::map<int, Client>::iterator it;
 
 	for (it = cl.begin(); it != cl.end(); it++)
 	{
@@ -33,7 +33,7 @@ bool	client::msgCl(std::map<int, client>& cl, std::string& message, std::string&
 	return true;
 }
 
-bool	client::msgCh(std::map<std::string, Channel>& ch, std::string& message, std::string& receiver)
+bool	Client::msgCh(std::map<std::string, Channel>& ch, std::string& message, std::string& receiver)
 {
 	if (ch.find(receiver) == ch.end())
 		return send_error("ERR_NOSUCHCHANNEL" , receiver), false; // ERR_NOSUCHCHANNEL // done
@@ -52,7 +52,7 @@ bool	client::msgCh(std::map<std::string, Channel>& ch, std::string& message, std
 	return true;
 }
 
-bool	client::cmd_PRIVMSG(std::deque<std::string>& deq, std::map<int, client>& cl, std::map<std::string, Channel>& ch)
+bool	Client::cmd_PRIVMSG(std::deque<std::string>& deq, std::map<int, Client>& cl, std::map<std::string, Channel>& ch)
 {
 	std::vector<std::string>	receivers;
 	std::string	message("");

@@ -1,9 +1,9 @@
 #include "client.hpp"
 
-void	client::send_all(Channel& ch, string usr, char flag, bool sign)
+void	Client::send_all(Channel& ch, string usr, char flag, bool sign)
 {	
 	char i;
-	std::vector<client *>::iterator it;
+	std::vector<Client *>::iterator it;
 	if (sign)
 		i = '+';
 	else
@@ -12,7 +12,7 @@ void	client::send_all(Channel& ch, string usr, char flag, bool sign)
 		(*it)->send_message(::string(":" + this->getNick() + " MODE " + ch.getTitle() + " " + i + flag + " " + usr + "\r\n"));
 }
 
-void	client::flag_i(Channel& ch, bool sign)
+void	Client::flag_i(Channel& ch, bool sign)
 {
 	if (ch.vecFind(ch.mods, *this) == ch.mods.end())
 		return send_error("ERR_CHANOPRIVSNEEDED", ch.getTitle()), (void)0; // ERR_CHANOPRIVSNEEDED // done 
@@ -20,7 +20,7 @@ void	client::flag_i(Channel& ch, bool sign)
 	ch.set_i(sign);
 }
 
-void	client::flag_t(Channel& ch, bool sign)
+void	Client::flag_t(Channel& ch, bool sign)
 {
 	if (ch.vecFind(ch.mods, *this) == ch.mods.end())
 		return send_error("ERR_CHANOPRIVSNEEDED", ch.getTitle()), (void)0; // ERR_CHANOPRIVSNEEDED // done 
@@ -28,7 +28,7 @@ void	client::flag_t(Channel& ch, bool sign)
 	send_all(ch, ::string(""), 't', sign);
 }
 
-void	client::flag_k(Channel& ch, bool sign, std::deque<std::string>& deq)
+void	Client::flag_k(Channel& ch, bool sign, std::deque<std::string>& deq)
 {
 	if (ch.vecFind(ch.mods, *this) == ch.mods.end())
 		return send_error("ERR_CHANOPRIVSNEEDED", ch.getTitle()), (void)0; // ERR_CHANOPRIVSNEEDED // done 
@@ -48,9 +48,9 @@ void	client::flag_k(Channel& ch, bool sign, std::deque<std::string>& deq)
 	}
 }
 
-void	client::flag_o(Channel& ch, bool sign, client& cl)
+void	Client::flag_o(Channel& ch, bool sign, Client& cl)
 {
-	std::__1::vector<client *>::iterator it = ch.vecFind(ch.mods, cl);
+	std::__1::vector<Client *>::iterator it = ch.vecFind(ch.mods, cl);
 
 	if (ch.vecFind(ch.users, *this) == ch.users.end())
 		return send_error("ERR_USERNOTINCHANNEL" , ch.getTitle()), (void)0; // ERR_USERNOTINCHANNEL // done 
@@ -65,14 +65,24 @@ void	client::flag_o(Channel& ch, bool sign, client& cl)
 	send_all(ch, cl.getNick(), 'o', sign);
 }
 
-void	client::flag_l(std::deque<std::string>& deq, bool sign)
+void	Client::flag_l(std::deque<std::string>& deq, bool sign, Channel& ch)
 {
-	// if (deq.size() < 3)
-	// 	return send_error("ERR_NEEDMOREPARAMS", "MODE"), (void)1; // ERR_NEEDMOREPARAMS // done
-	deq.pop_front();
+	if (deq.empty())
+		return send_error("ERR_NEEDMOREPARAMS", "MODE"), (void)0; // ERR_NEEDMOREPARAMS // done 
+	if (sign)
+	{
+		if (deq.front().find_first_not_of("0123456789") == std::string::npos)
+			return send_error("ERR_NEEDMOREPARAMS", "MODE"), (void)0; // ERR_NEEDMOREPARAMS // done
+		ch.set_l(std::atoi(deq.front().c_str()));
+		send_all(ch, ::string("88"), 'l', sign);
+	}
+	else{
+		ch.set_l(-1);
+		send_all(ch, ::string(""), 'l', sign);
+	}
 }
 
-bool	client::cmd_MODE(std::deque<std::string>& deq, std::map<int, client>& cl, std::map<std::string, Channel>& ch)
+bool	Client::cmd_MODE(std::deque<std::string>& deq, std::map<int, Client>& cl, std::map<std::string, Channel>& ch)
 {
 	std::vector<std::pair<bool, char> >modes;
 	bool	sign = true;
@@ -96,7 +106,7 @@ bool	client::cmd_MODE(std::deque<std::string>& deq, std::map<int, client>& cl, s
 	if (modes.empty())
 		return send_error("ERR_NEEDMOREPARAMS", "MODE"), false; // ERR_NEEDMOREPARAMS // done
 	deq.pop_front();
-	std::__1::map<int, client>::iterator it;
+	std::__1::map<int, Client>::iterator it;
 	for (size_t i = 0; i < modes.size(); i++)
 	{
 		if (modes[i].second == 'i')
@@ -106,7 +116,7 @@ bool	client::cmd_MODE(std::deque<std::string>& deq, std::map<int, client>& cl, s
 		else if (modes[i].second == 'k')
 			flag_k(chan, modes[i].first, deq);
 		else if (modes[i].second == 'l')
-			flag_l(deq, sign);
+			flag_l(deq, sign, chan);
 		else if (modes[i].second == 'o')
 		{
 			if (deq.empty())

@@ -17,7 +17,7 @@
 
 using namespace std;
 
-class client;
+class Client;
 
 class Channel
 {
@@ -29,26 +29,27 @@ public:
 	std::string&	getTitle(void);
 	std::string&	GetKey(void);
 
-	bool			add_user(client& cl);
+	bool			add_user(Client& cl);
 	void			show_details();
-	bool			addMod(client&);
+	bool			addMod(Client&);
 	
 	void	set_i(bool);
 	void	set_t(bool);
 	void	set_k(bool);
 	void	setKey(std::string);
-	std::vector<client *>::iterator	vecFind(std::vector<client *>&, client&);
-	std::vector<client *>::iterator	vecFind(std::vector<client *>&, std::string&);
-	bool							kickUser(std::string &nick, client &cl, string &);
+	void	set_l(int);
+	std::vector<Client *>::iterator	vecFind(std::vector<Client *>&, Client&);
+	std::vector<Client *>::iterator	vecFind(std::vector<Client *>&, std::string&);
+	bool							kickUser(std::string &nick, Client &cl, string &);
 	bool							isActive(const char &mode);
-	bool							setTopic(std::string &topic, client &cl);
-	bool							isMod(client &cl);
-	bool							isUser(client &cl);
-	bool							isInvited(client &cl);
-	bool							inviteUser(client &cl);
-	std::vector<client *>	users;
-	std::vector<client *>	mods;
-	std::vector<client *>	invited;
+	bool							setTopic(std::string &topic, Client &cl);
+	bool							isMod(Client &cl);
+	bool							isUser(Client &cl);
+	bool							isInvited(Client &cl);
+	bool							inviteUser(Client &cl);
+	std::vector<Client *>	users;
+	std::vector<Client *>	mods;
+	std::vector<Client *>	invited;
 
 private:
 	string join_msg(string nickname,string username, string);

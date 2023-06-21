@@ -1,6 +1,6 @@
 #include "client.hpp"
 
-bool client::print_notice(int fd, std::string& message, std::string& receiver, bool isChannel)
+bool Client::print_notice(int fd, std::string& message, std::string& receiver, bool isChannel)
 {
 	string msg;
 	if (isChannel)
@@ -13,9 +13,9 @@ bool client::print_notice(int fd, std::string& message, std::string& receiver, b
 }
 
 
-bool	client::notice_msg_cl(std::map<int, client>& cl, std::string& message, std::string& receiver)
+bool	Client::notice_msg_cl(std::map<int, Client>& cl, std::string& message, std::string& receiver)
 {
-	std::map<int, client>::iterator it;
+	std::map<int, Client>::iterator it;
 
 	for (it = cl.begin(); it != cl.end(); it++)
 	{
@@ -29,7 +29,7 @@ bool	client::notice_msg_cl(std::map<int, client>& cl, std::string& message, std:
 	return true;
 }
 
-bool	client::notice_msg_ch(std::map<std::string, Channel>& ch, std::string& message, std::string& receiver)
+bool	Client::notice_msg_ch(std::map<std::string, Channel>& ch, std::string& message, std::string& receiver)
 {
 	if (ch.find(receiver) == ch.end())
 		return send_error("ERR_NOSUCHCHANNEL" , receiver), false; // ERR_NOSUCHCHANNEL // done
@@ -48,7 +48,7 @@ bool	client::notice_msg_ch(std::map<std::string, Channel>& ch, std::string& mess
 	return true;
 }
 
-bool	client::cmd_NOTICE(std::deque<std::string>& deq, std::map<int, client>& cl, std::map<std::string, Channel>& ch)
+bool	Client::cmd_NOTICE(std::deque<std::string>& deq, std::map<int, Client>& cl, std::map<std::string, Channel>& ch)
 {
 	std::vector<std::string>	receivers;
 	std::string	message("");

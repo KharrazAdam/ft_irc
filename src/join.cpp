@@ -1,14 +1,14 @@
 #include "client.hpp"
 #include "channel.hpp"
 
-bool	Channel::addMod(client& cl)
+bool	Channel::addMod(Client& cl)
 {
 	mods.push_back(&cl);
 	return true;
 }
 
 
-bool	client::cmd_JOIN(std::deque<std::string>& deq, std::map<std::string, Channel>& channels)
+bool	Client::cmd_JOIN(std::deque<std::string>& deq, std::map<std::string, Channel>& channels)
 {
 	std::vector<std::string>	titles;
 	std::vector<std::string>	keys;

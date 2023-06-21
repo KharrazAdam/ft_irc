@@ -3,9 +3,9 @@
 /**
  * @note please recode this function in a clean way
 */
-bool	client::cmd_NICK(std::deque<std::string>& deq, std::map<int, client>& cl)
+bool	Client::cmd_NICK(std::deque<std::string>& deq, std::map<int, Client>& cl)
 {
-	std::map<int, client>::iterator it = cl.begin();
+	std::map<int, Client>::iterator it = cl.begin();
 
 	if (deq.size() == 1)
 		return send_error("ERR_NONICKNAMEGIVEN"), false; // ERR_NONICKNAMEGIVEN // done

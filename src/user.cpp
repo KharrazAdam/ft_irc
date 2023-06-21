@@ -1,6 +1,6 @@
 #include "client.hpp"
 
-bool	client::cmd_USER(std::deque<std::string>& deq)
+bool	Client::cmd_USER(std::deque<std::string>& deq)
 {
 	if (auth & AUTHENTIFICATED)
 		return send_error("ERR_ALREADYREGISTERED"), false; // ERR_ALREADYREGISTRED // done
