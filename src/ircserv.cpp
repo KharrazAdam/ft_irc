@@ -78,6 +78,7 @@ bool	ircserv::ircserv_quit(pollfd& Ps)
 		if ((*it).second.isInvited(user[Ps.fd]))
 			(*it).second.invited.erase((*it).second.vecFind((*it).second.invited, user[Ps.fd].getNick()));
 		// if moderator
+		user[Ps.fd].send_all((*it).second, ::string(user[Ps.fd].getNick() + ""), 's', true);
 		if ((*it).second.isMod(user[Ps.fd]))
 		{
 			(*it).second.mods.erase((*it).second.vecFind((*it).second.mods, user[Ps.fd].getNick()));
@@ -89,7 +90,10 @@ bool	ircserv::ircserv_quit(pollfd& Ps)
 		}
 		//if user
 		else if ((*it).second.isUser(user[Ps.fd]))
+		{
+			user[Ps.fd].send_all((*it).second, ::string(""), 's', true);
 			(*it).second.users.erase((*it).second.vecFind((*it).second.users, user[Ps.fd].getNick()));
+		}
 	}
 	return true;
 }
