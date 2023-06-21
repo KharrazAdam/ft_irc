@@ -83,20 +83,20 @@ string get_mods(vector<Client *> &mods)
     return msg;
 }
 
-string Channel::join_msg(string nickname,string username, string moders)
+string Channel::join_msg(string nickname,string username, string adrs, string moders)
 {
-	string msg = ":" + nickname + "!" + username + "@localhost JOIN " + this->title + "\r\n";
+	string msg = ":" + nickname + "!" + username + "@"+adrs+" JOIN " + this->title + "\r\n";
 	msg += ":startimes42 MODE o +o\r\n";
 	msg += ":startimes42 353 " + nickname + " = " + this->title + " :"+ moders +"\r\n";
 	msg += ":startimes42 366 " + nickname + " " + this->title + " :End of /NAMES list.\r\n";
 	return msg;
 }
 
-string Channel::join_msg_exi(string nickname,string username, string moders)
+string Channel::join_msg_exi(string nickname,string username, string adrs, string moders)
 {
-	string msg = ":" + nickname + "!" + username + "@localhost JOIN " + this->title + "\r\n";
+	string msg = ":" + nickname + "!" + username + "@"+adrs+" JOIN " + this->title + "\r\n";
 	msg += ":startimes42 332 " + nickname + " " + this->title + " :" + (this->topic.empty() ? "No topic is set" : this->topic) + "\r\n";
-	msg += ":startimes42 333 " + nickname + " " + this->title + " " + nickname + "!"+ username+"@localhost\r\n";
+	msg += ":startimes42 333 " + nickname + " " + this->title + " " + nickname + "!"+ username+"@"+adrs+"\r\n";
 	
 	std::vector<Client *>::iterator it;
 	msg += ":startimes42 353 " + nickname + " = " + this->title + " :@";
@@ -148,13 +148,13 @@ bool	Channel::add_user(Client &cl)
 	users.push_back(&cl);
 	if (users.size() == 1) // new channel
 	{
-		cl.send_message(join_msg(cl.getNick(),cl.getNick(), get_mods(this->mods)));
+		cl.send_message(join_msg(cl.getNick(),cl.getUsername(), cl.getAddr() ,get_mods(this->mods)));
 		//send_msg(":" + cl.getNick() + "!" + cl.getUsername() + "@localhost JOIN " + this->title + "\r\n");
 	}
 	else // existed channel
 	{
-		cl.send_message(join_msg_exi(cl.getNick(),cl.getNick(), get_mods(this->mods)));
-		send_msg(":" + cl.getNick() + "!" + cl.getUsername() + "@localhost JOIN " + this->title + "\r\n");
+		cl.send_message(join_msg_exi(cl.getNick(),cl.getUsername(),cl.getAddr(), get_mods(this->mods)));
+		send_msg(":" + cl.getNick() + "!" + cl.getUsername() + "@"+cl.getAddr()+" JOIN " + this->title + "\r\n");
 	}
 	if (mods.size() == 0)
 		mods.push_back(&cl);
@@ -176,7 +176,7 @@ bool Channel::kickUser(std::string &nick, Client &cl, std::string &reason)
 	}
 	tmp = *vecFind(users, nick);
 	users.erase(vecFind(users, nick));
-	tmp->send_message(":" + cl.getNick() + "!" + cl.getUsername() + "@localhost KICK " + this->title + " " + nick + " :" + reason + "\r\n");
+	tmp->send_message(":" + cl.getNick() + "!" + cl.getUsername() + "@"+cl.getAddr()+" KICK " + this->title + " " + nick + " :" + reason + "\r\n");
 	return true;
 }
 

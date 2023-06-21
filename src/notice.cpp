@@ -4,7 +4,7 @@ bool Client::print_notice(int fd, std::string& message, std::string& receiver, b
 {
 	string msg;
 	if (isChannel)
-		msg = ":" + nickname + "!"+nickname+"@" + "localhost" + " NOTICE " + receiver + " :" + message + "\r\n";
+		msg = ":" + nickname + "!"+nickname+"@" + getAddr() + " NOTICE " + receiver + " :" + message + "\r\n";
 	else
 		msg = ":" + nickname + " NOTICE " + receiver + " :" + message + "\r\n";
 	if (send(fd, msg.c_str(), msg.size(), 0) == -1)

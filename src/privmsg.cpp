@@ -1,16 +1,12 @@
 #include "client.hpp"
 
-// 
-//   :dan!~h@localhost PRIVMSG #coolpeople :Hi everyone!
-//                                   ; Message from dan to the channel
-//                                   #coolpeopl
 bool Client::print_pvmsg(int fd, std::string& message, std::string& receiver, bool isChannel)
 {
 	string msg;
 	if (isChannel)
-		msg = ":" + nickname + "!"+nickname+"@" + "localhost" + " PRIVMSG " + receiver + " :" + message + "\r\n";
+		msg = ":" + nickname + "!"+nickname+"@" + getAddr() + " PRIVMSG " + receiver + " :" + message + "\r\n";
 	else
-		msg = ":" + nickname + "!"+nickname+"@" + "localhost" + " PRIVMSG " + receiver + " :" + message + "\r\n";
+		msg = ":" + nickname + "!"+nickname+"@" + getAddr() + " PRIVMSG " + receiver + " :" + message + "\r\n";
 	if (send(fd, msg.c_str(), msg.size(), 0) == -1)
 		return false;
 	return true;

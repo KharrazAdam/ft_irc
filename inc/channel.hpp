@@ -52,8 +52,8 @@ public:
 	std::vector<Client *>	invited;
 
 private:
-	string join_msg(string nickname,string username, string);
-	string join_msg_exi(string nickname,string username, string);
+	string join_msg(string nickname,string username, string adrs, string);
+	string join_msg_exi(string nickname,string username, string adrs, string);
 	// std::map<std::string, int>&	getUsers(void);
 	// std::vector<int>&	getMods(void);
 	// std::vector<int> 			mods;

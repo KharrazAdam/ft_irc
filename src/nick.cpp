@@ -21,7 +21,7 @@ bool	Client::cmd_NICK(std::deque<std::string>& deq, std::map<int, Client>& cl)
 		it++;
 	}
 	if (auth & NICKNAME)
-		return send_message(":" + nickname + "!"+username+"@startimes42 NICK " + deq.front() + "\r\n"), nickname = deq.front(), true;
+		return send_message(":" + nickname + "!"+username+"@"+getAddr()+" NICK " + deq.front() + "\r\n"), nickname = deq.front(), true;
 	nickname = deq.front();
 	if ((auth & USERNAME))
 	{

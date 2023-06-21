@@ -262,7 +262,7 @@ bool Client::cmd_TOPIC(std::deque<std::string> & deq, std::map<std::string, Chan
 	if (channels[chan].isActive('t') && !channels[chan].isMod(*this)) // done !
 		return send_error("ERR_CHANOPRIVSNEEDED", chan), false; // ERR_CHANOPRIVSNEEDED // done !
 	channels[chan].setTopic(topic, *this);
-	send_message(":"+nickname + "!"+username +"@startimes42 TOPIC "+ chan + " :" + topic + "\r\n");
+	send_message(":"+nickname + "!"+username +"@"+getAddr()+" TOPIC "+ chan + " :" + topic + "\r\n");
 	return true;
 }
 
@@ -286,7 +286,7 @@ bool Client::cmd_INVITE(std::deque<std::string> & deq, std::map<int, Client>& us
 	if (mapFind(users, nick) != users.end())
 	{
 		channels[chan].inviteUser((*mapFind(users, nick)).second);
-		(*mapFind(users, nick)).second.send_message(":" + nickname + "!"+username+"@startimes42 INVITE " + nick + " " + chan + "\r\n");
+		(*mapFind(users, nick)).second.send_message(":" + nickname + "!"+username+"@"+getAddr()+" INVITE " + nick + " " + chan + "\r\n");
 	}
 	else
 		return send_error("ERR_NOSUCHNICK"), false; // ERR_NOSUCHNICK // done !
