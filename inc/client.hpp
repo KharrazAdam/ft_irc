@@ -70,6 +70,8 @@ public:
 	void	flag_t(Channel&, bool);
 	void	flag_k(Channel&, bool, std::deque<std::string>&);
 	void	flag_o(Channel&, bool, client&);
+	void	flag_l(std::deque<std::string>&, bool);
+	void	send_all(Channel&, string, char, bool);
 
 	bool	cmd_KICK(std::deque<std::string>&, std::map<std::string, Channel>&);
 

@@ -1,33 +1,5 @@
 #include "client.hpp"
 
-// bool	client::noticeCl(std::map<int, client>& cl, std::string& message, std::string& receiver)
-// {
-// 	std::map<int, client>::iterator it;
-
-// 	for (it = cl.begin(); it != cl.end(); it++)
-// 	{
-// 		if (receiver == (*it).second.getNick())
-// 			break ;
-// 	}
-// 	if (it == cl.end())
-// 		return false;
-// 	return send_message(::string(":" + getNick() + "!" + getUsername() + "@localhost NOTICE " + receiver + " :" + message + "\r\n"));
-// }
-
-// bool	client::noticeCh(std::map<std::string, Channel>& ch, std::string& message, std::string& receiver)
-// {
-// 	if (ch.find(receiver) == ch.end())
-// 		return false;
-// 	else
-// 	{
-// 		if (ch[receiver].vecFind(ch[receiver].users, *this) == ch[receiver].users.end()) /// not a cmember
-// 			return false;
-// 		for (size_t j = 0; j < ch[receiver].users.size(); j++)
-// 			send_message(::string(":" + getNick() + "!" + getUsername() + "@localhost NOTICE " + receiver + " :" + message + "\r\n"));
-// 	}
-// 	return true;
-// }
-
 bool client::print_notice(int fd, std::string& message, std::string& receiver, bool isChannel)
 {
 	string msg;

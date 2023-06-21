@@ -1,15 +1,22 @@
 #include "client.hpp"
 
-	// · i: Set/remove Invite-only channel
-	// · t: Set/remove the restrictions of the TOPIC command to channel
-	// operators
-	// · k: Set/remove the channel key (password)
-	// · o: Give/take channel operator privilege
+void	client::send_all(Channel& ch, string usr, char flag, bool sign)
+{	
+	char i;
+	std::vector<client *>::iterator it;
+	if (sign)
+		i = '+';
+	else
+		i = '-';
+	for (it = ch.users.begin(); it != ch.users.end(); it++)
+		(*it)->send_message(::string(":" + this->getNick() + " MODE " + ch.getTitle() + " " + i + flag + " " + usr + "\r\n"));
+}
 
 void	client::flag_i(Channel& ch, bool sign)
 {
 	if (ch.vecFind(ch.mods, *this) == ch.mods.end())
 		return send_error("ERR_CHANOPRIVSNEEDED", ch.getTitle()), (void)0; // ERR_CHANOPRIVSNEEDED // done 
+	send_all(ch, ::string(""), 'i', sign);
 	ch.set_i(sign);
 }
 
@@ -18,6 +25,7 @@ void	client::flag_t(Channel& ch, bool sign)
 	if (ch.vecFind(ch.mods, *this) == ch.mods.end())
 		return send_error("ERR_CHANOPRIVSNEEDED", ch.getTitle()), (void)0; // ERR_CHANOPRIVSNEEDED // done 
 	ch.set_t(sign);
+	send_all(ch, ::string(""), 't', sign);
 }
 
 void	client::flag_k(Channel& ch, bool sign, std::deque<std::string>& deq)
@@ -28,12 +36,14 @@ void	client::flag_k(Channel& ch, bool sign, std::deque<std::string>& deq)
 	{
 		ch.setKey("");
 		ch.set_k(false);
+		send_all(ch, ::string(""), 'k', sign);
 	}
 	else
 	{
 		if (deq.empty())
 			return send_error("ERR_NEEDMOREPARAMS", "MODE"), (void)1; // ERR_NEEDMOREPARAMS // done 
 		ch.setKey(deq.front());
+		send_all(ch, deq.front(), 'k', sign);
 		deq.pop_front();
 	}
 }
@@ -52,11 +62,18 @@ void	client::flag_o(Channel& ch, bool sign, client& cl)
 		ch.mods.push_back(&cl);
 	else if (!sign && (it != ch.mods.end()) && ch.mods.size() > 1)
 		ch.mods.erase(it);
+	send_all(ch, cl.getNick(), 'o', sign);
+}
+
+void	client::flag_l(std::deque<std::string>& deq, bool sign)
+{
+	// if (deq.size() < 3)
+	// 	return send_error("ERR_NEEDMOREPARAMS", "MODE"), (void)1; // ERR_NEEDMOREPARAMS // done
+	deq.pop_front();
 }
 
 bool	client::cmd_MODE(std::deque<std::string>& deq, std::map<int, client>& cl, std::map<std::string, Channel>& ch)
 {
-	(void)cl;
 	std::vector<std::pair<bool, char> >modes;
 	bool	sign = true;
 	
@@ -88,6 +105,8 @@ bool	client::cmd_MODE(std::deque<std::string>& deq, std::map<int, client>& cl, s
 			flag_t(chan, modes[i].first);
 		else if (modes[i].second == 'k')
 			flag_k(chan, modes[i].first, deq);
+		else if (modes[i].second == 'l')
+			flag_l(deq, sign);
 		else if (modes[i].second == 'o')
 		{
 			if (deq.empty())
