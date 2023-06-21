@@ -67,19 +67,20 @@ void	Client::flag_o(Channel& ch, bool sign, Client& cl)
 
 void	Client::flag_l(std::deque<std::string>& deq, bool sign, Channel& ch)
 {
-	if (deq.empty())
-		return send_error("ERR_NEEDMOREPARAMS", "MODE"), (void)0; // ERR_NEEDMOREPARAMS // done 
 	if (sign)
 	{
-		if (deq.front().find_first_not_of("0123456789") == std::string::npos)
+		if (deq.empty())
+			return send_error("ERR_NEEDMOREPARAMS", "MODE"), (void)0; // ERR_NEEDMOREPARAMS // done 
+		if (deq.front().find_first_not_of("0123456789") != std::string::npos)
 			return send_error("ERR_NEEDMOREPARAMS", "MODE"), (void)0; // ERR_NEEDMOREPARAMS // done
 		ch.set_l(std::atoi(deq.front().c_str()));
-		send_all(ch, ::string("88"), 'l', sign);
+		send_all(ch, deq.front(), 'l', sign);
 	}
 	else{
 		ch.set_l(-1);
 		send_all(ch, ::string(""), 'l', sign);
 	}
+	deq.pop_front();
 }
 
 bool	Client::cmd_MODE(std::deque<std::string>& deq, std::map<int, Client>& cl, std::map<std::string, Channel>& ch)
