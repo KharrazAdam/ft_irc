@@ -108,7 +108,6 @@ string Channel::join_msg_exi(string nickname,string username, string moders)
 			msg += ":startimes42 353 " + nickname + " = " + this->title + " :" + (*it)->getNick() +"\r\n";
 	}
 	msg += ":startimes42 366 " + nickname + " " + this->title + " :End of /NAMES list.\r\n";
-	msg += ":startimes42 366 " + nickname + " " + this->title + " :End of /NAMES list.\r\n";
 	(void)moders;
 	//inform members
 	return msg;
