@@ -29,7 +29,7 @@ bool	ircserv::is_num(string str)
 
 /**
  * @param av is the second command line's arg
- * @brief checks if the param is number and checks for it's range 1024 -> 65535
+ * @brief checks if the param is number and checks for its range 1024 -> 65535
  * @return true if valid or false otherwise
 */
 bool	ircserv::ircserv_port(const char *av, const char* pass)
